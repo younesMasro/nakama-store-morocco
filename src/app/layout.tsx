@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { Cinzel, Inter, Katibeh } from "next/font/google";
+import { Cinzel, Inter, Rakkas } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { CartProvider } from "@/components/providers/CartProvider";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import InstagramPopup from "@/components/ui/InstagramPopup";
 
 const cinzel = Cinzel({
   subsets: ["latin"],
@@ -19,8 +20,8 @@ const inter = Inter({
   display: "swap",
 });
 
-const katibeh = Katibeh({
-  subsets: ["arabic"],
+const rakkas = Rakkas({
+  subsets: ["arabic", "latin"],
   variable: "--font-arabic-calligraphy",
   display: "swap",
   weight: ["400"],
@@ -57,7 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en"
       data-theme="black-dragon"
       suppressHydrationWarning
-      className={`${cinzel.variable} ${inter.variable} ${katibeh.variable}`}
+      className={`${cinzel.variable} ${inter.variable} ${rakkas.variable}`}
     >
       <head>
         {/* Anti-flicker: set theme before first paint */}
@@ -69,6 +70,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Navbar />
             <main>{children}</main>
             <Footer />
+            <InstagramPopup />
           </CartProvider>
         </ThemeProvider>
       </body>

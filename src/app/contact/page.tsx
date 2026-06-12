@@ -172,6 +172,33 @@ export default function ContactPage() {
               <ChevronRight size={14} style={{ color: "var(--gold)", marginLeft: "auto", opacity: 0.6 }} />
             </a>
 
+            {/* Email */}
+            <a
+              href="mailto:contact@nakamastore.ma"
+              className="flex items-center gap-4 transition-all duration-300"
+              style={{
+                background: glassBg,
+                border: "1px solid rgba(185,154,91,0.22)",
+                borderRadius: 12,
+                padding: "1.25rem 1.5rem",
+                marginTop: "1rem",
+                backdropFilter: "blur(10px)",
+                WebkitBackdropFilter: "blur(10px)",
+                textDecoration: "none",
+              }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(185,154,91,0.55)"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(185,154,91,0.22)"; }}
+            >
+              <div style={{ width: 42, height: 42, borderRadius: 10, backgroundColor: "rgba(185,154,91,0.12)", border: "1px solid rgba(185,154,91,0.28)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <Send size={18} style={{ color: "var(--gold)" }} />
+              </div>
+              <div>
+                <p style={{ color: "var(--text)", fontSize: "0.9rem", fontWeight: 500, marginBottom: "0.2rem" }}>Email</p>
+                <p style={{ color: "var(--text-muted)", fontSize: "0.75rem" }}>contact@nakamastore.ma</p>
+              </div>
+              <ChevronRight size={14} style={{ color: "var(--gold)", marginLeft: "auto", opacity: 0.6 }} />
+            </a>
+
             {/* Info note */}
             <div style={{ marginTop: "1.5rem", padding: "1rem", borderRadius: 8, border: "1px solid rgba(185,154,91,0.14)", backgroundColor: isBlack ? "rgba(185,154,91,0.04)" : "rgba(185,154,91,0.06)" }}>
               <p style={{ color: "var(--text-muted)", fontSize: "0.78rem", lineHeight: 1.65 }}>

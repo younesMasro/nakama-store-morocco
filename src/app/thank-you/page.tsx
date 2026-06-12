@@ -120,10 +120,10 @@ function ThankYouContent() {
             {lines.map(({ label, value, green, gift }) => (
               <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16 }}>
                 <span style={{ color: "var(--text-muted)", fontSize: "0.72rem", letterSpacing: "0.08em", flexShrink: 0, display: "flex", alignItems: "center", gap: 5 }}>
-                  {gift && <Gift size={11} strokeWidth={1.5} style={{ color: "#22c55e" }} />}
+                  {gift && <Gift size={11} strokeWidth={1.5} style={{ color: "var(--gold)" }} />}
                   {label}
                 </span>
-                <span style={{ color: green ? "#22c55e" : "var(--text)", fontSize: "0.82rem", textAlign: "right", fontWeight: green ? 600 : 400 }}>{value}</span>
+                <span style={{ color: green ? "var(--gold)" : "var(--text)", fontSize: "0.82rem", textAlign: "right", fontWeight: green ? 700 : 400 }}>{value}</span>
               </div>
             ))}
 
@@ -158,7 +158,7 @@ function ThankYouContent() {
           {/* CTAs */}
           <motion.div variants={item} style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
             <a href={waHref} target="_blank" rel="noopener noreferrer"
-              style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, height: 52, borderRadius: 12, backgroundColor: "#25D366", color: "#fff", fontSize: "0.68rem", letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 700, textDecoration: "none" }}
+              style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, height: 52, borderRadius: 12, backgroundColor: "var(--gold)", color: "var(--bg)", fontSize: "0.68rem", letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 700, textDecoration: "none" }}
             >
               <MessageCircle size={16} strokeWidth={1.8} />
               FOLLOW UP ON WHATSAPP

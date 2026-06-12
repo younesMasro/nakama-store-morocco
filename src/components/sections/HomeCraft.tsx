@@ -140,7 +140,7 @@ export default function HomeCraft() {
                 <MessageCircle size={14} /> ORDER ON WHATSAPP
               </a>
               <Link
-                href="/contact"
+                href="/catalogue"
                 className="inline-flex items-center gap-2 transition-all duration-300"
                 style={{
                   height: 52, padding: "0 28px", borderRadius: 8,
@@ -150,7 +150,7 @@ export default function HomeCraft() {
                 onMouseEnter={(e) => { const el = e.currentTarget as HTMLElement; el.style.backgroundColor = "var(--gold)"; el.style.color = "var(--bg)"; }}
                 onMouseLeave={(e) => { const el = e.currentTarget as HTMLElement; el.style.backgroundColor = "transparent"; el.style.color = "var(--gold)"; }}
               >
-                ORDER FORM <ChevronRight size={13} strokeWidth={1.5} />
+                SHOP NOW <ChevronRight size={13} strokeWidth={1.5} />
               </Link>
             </div>
           </motion.div>

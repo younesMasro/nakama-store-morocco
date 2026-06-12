@@ -3,11 +3,11 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
-import { ShoppingBag, Menu, X, ChevronRight } from "lucide-react";
+import { ShoppingBag, Menu, X, ChevronRight, MessageCircle, AtSign, Mail } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { useCart } from "@/components/providers/CartProvider";
+import { site } from "@/data/site";
 
 const NAV_LINKS = [
   { label: "Catalogue", href: "/catalogue" },
@@ -16,30 +16,30 @@ const NAV_LINKS = [
   { label: "Contact",   href: "/contact"   },
 ];
 
-const DRAGONS = [
+const CONTACTS = [
   {
-    slug:  "black-dragon" as const,
-    ja:    "黒い龍",
-    ar:    "التنين الأسود",
-    label: "BLACK DRAGON",
-    bg:    "linear-gradient(145deg,#0d0d0d 0%,#1a1206 55%,#0a0a0a 100%)",
-    textColor: "#F4F1EA",
+    icon: MessageCircle,
+    label: "WhatsApp",
+    href: `https://wa.me/${site.whatsapp.replace(/\D/g, "")}`,
+    external: true,
   },
   {
-    slug:  "white-dragon" as const,
-    ja:    "白い龍",
-    ar:    "التنين الأبيض",
-    label: "WHITE DRAGON",
-    bg:    "linear-gradient(145deg,#f7f2e8 0%,#efe6d7 55%,#f5edd8 100%)",
-    textColor: "#6f5e4a",
+    icon: AtSign,
+    label: "Instagram",
+    href: site.instagram,
+    external: true,
   },
-] as const;
+  {
+    icon: Mail,
+    label: "contact@nakamastore.ma",
+    href: "mailto:contact@nakamastore.ma",
+    external: false,
+  },
+];
 
 export default function Navbar() {
   const { theme, setTheme } = useTheme();
   const { totalCount } = useCart();
-  const pathname = usePathname();
-  const router   = useRouter();
   const isBlack  = theme === "black-dragon";
   const [scrolled,  setScrolled]  = useState(false);
   const [menuOpen,  setMenuOpen]  = useState(false);
@@ -55,16 +55,6 @@ export default function Navbar() {
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
-
-  const handleDragonChange = (slug: "black-dragon" | "white-dragon") => {
-    setTheme(slug);
-    setMenuOpen(false);
-    if (pathname.startsWith("/product/")) {
-      router.push(`/product/${slug}`);
-    } else {
-      router.push(`/product/${slug}`);
-    }
-  };
 
   const headerBg  = scrolled ? (isBlack ? "rgba(5,5,5,0.72)" : "rgba(247,242,232,0.82)") : "transparent";
   const goldColor = "var(--gold)";
@@ -124,10 +114,44 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* RIGHT: theme toggle + cart + contact */}
+          {/* RIGHT: theme toggle + cart */}
           <div className="flex items-center justify-end gap-3 md:gap-4 w-1/3">
             <div className="hidden md:block">
               <ThemeToggle compact />
+            </div>
+
+            {/* Mobile-only pill toggle (黒 / 白) */}
+            <div className="flex md:hidden items-center" style={{
+              borderRadius: 999,
+              border: "1px solid rgba(185,154,91,0.3)",
+              padding: 3,
+              gap: 2,
+              backgroundColor: isBlack ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)",
+            }}>
+              {(["black-dragon", "white-dragon"] as const).map((slug) => {
+                const active = theme === slug;
+                return (
+                  <button
+                    key={slug}
+                    onClick={() => setTheme(slug)}
+                    title={slug === "black-dragon" ? "Black Dragon" : "White Dragon"}
+                    style={{
+                      borderRadius: 999,
+                      padding: "3px 9px",
+                      fontSize: "0.72rem",
+                      border: "none",
+                      cursor: "pointer",
+                      transition: "all 0.25s ease",
+                      backgroundColor: active ? "var(--gold)" : "transparent",
+                      color: active ? "#1a1206" : "var(--text-muted)",
+                      fontWeight: active ? 700 : 400,
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {slug === "black-dragon" ? "黒" : "白"}
+                  </button>
+                );
+              })}
             </div>
 
             <Link
@@ -152,7 +176,6 @@ export default function Navbar() {
                 </span>
               )}
             </Link>
-
           </div>
         </div>
       </header>
@@ -180,8 +203,14 @@ export default function Navbar() {
           paddingBottom: "env(safe-area-inset-bottom)",
         }}
       >
-        {/* Drawer header */}
-        <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid rgba(185,154,91,0.15)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        {/* Drawer header: logo + close */}
+        <div style={{
+          padding: "1.25rem 1.5rem",
+          borderBottom: "1px solid rgba(185,154,91,0.15)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}>
           <Link href="/" onClick={() => setMenuOpen(false)}>
             <Image
               src={isBlack ? "/images/logo/logo-light.png" : "/images/logo/logo-dark.png"}
@@ -240,81 +269,43 @@ export default function Navbar() {
           </Link>
         </nav>
 
-        {/* Dragon cards */}
+        {/* Contact section */}
         <div style={{ padding: "1.25rem 1.5rem", borderTop: "1px solid rgba(185,154,91,0.15)" }}>
-          <p style={{ color: "var(--gold)", fontSize: "0.48rem", letterSpacing: "0.34em", textTransform: "uppercase", opacity: 0.62, marginBottom: "0.85rem" }}>
-            CHOOSE YOUR DRAGON
+          <p style={{ color: "var(--gold)", fontSize: "0.48rem", letterSpacing: "0.34em", textTransform: "uppercase", opacity: 0.62, marginBottom: "0.9rem" }}>
+            CONTACT
           </p>
-
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.6rem" }}>
-            {DRAGONS.map(({ slug, ja, ar, label, bg, textColor }) => {
-              const isActive = theme === slug;
-              return (
-                <button
-                  key={slug}
-                  onClick={() => handleDragonChange(slug)}
-                  style={{
-                    background: bg,
-                    borderRadius: 10,
-                    padding: "0.85rem 0.5rem",
-                    border: isActive ? "1.5px solid var(--gold)" : "1px solid rgba(185,154,91,0.2)",
-                    boxShadow: isActive ? "0 0 14px rgba(185,154,91,0.18), inset 0 0 8px rgba(185,154,91,0.06)" : "none",
-                    cursor: "pointer",
-                    textAlign: "center",
-                    transition: "all 0.35s ease",
-                    position: "relative",
-                    overflow: "hidden",
-                  }}
-                >
-                  {/* Active glow pip */}
-                  {isActive && (
-                    <div style={{
-                      position: "absolute", top: 7, right: 7,
-                      width: 5, height: 5, borderRadius: "50%",
-                      backgroundColor: "var(--gold)",
-                      boxShadow: "0 0 6px var(--gold)",
-                    }} />
-                  )}
-
-                  {/* Arabic */}
-                  <p style={{
-                    fontFamily: "var(--font-arabic-calligraphy, serif)",
-                    color: "var(--gold)",
-                    fontSize: "1.35rem",
-                    lineHeight: 1,
-                    marginBottom: "0.3rem",
-                    opacity: isActive ? 1 : 0.72,
-                  }}>
-                    {ar}
-                  </p>
-
-                  {/* Japanese */}
-                  <p style={{
-                    fontSize: "0.44rem",
-                    letterSpacing: "0.22em",
-                    color: isActive ? "var(--gold)" : "rgba(185,154,91,0.55)",
-                    marginBottom: "0.35rem",
-                    transition: "color 0.3s",
-                  }}>
-                    {ja}
-                  </p>
-
-                  {/* Label */}
-                  <p style={{
-                    fontFamily: "var(--font-cinzel, serif)",
-                    fontSize: "0.55rem",
-                    letterSpacing: "0.14em",
-                    textTransform: "uppercase",
-                    color: isActive ? "var(--gold)" : textColor,
-                    fontWeight: isActive ? 600 : 400,
-                    opacity: isActive ? 1 : 0.72,
-                    transition: "all 0.3s",
-                  }}>
-                    {label}
-                  </p>
-                </button>
-              );
-            })}
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.7rem" }}>
+            {CONTACTS.map(({ icon: Icon, label, href, external }) => (
+              <a
+                key={href}
+                href={href}
+                target={external ? "_blank" : undefined}
+                rel={external ? "noopener noreferrer" : undefined}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  color: "var(--text-muted)",
+                  textDecoration: "none",
+                  fontSize: "0.72rem",
+                  letterSpacing: "0.03em",
+                  transition: "color 0.2s",
+                }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = goldColor; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--text-muted)"; }}
+              >
+                <span style={{
+                  width: 28, height: 28, borderRadius: 8,
+                  border: "1px solid rgba(185,154,91,0.22)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  flexShrink: 0,
+                  backgroundColor: isBlack ? "rgba(185,154,91,0.06)" : "rgba(185,154,91,0.08)",
+                }}>
+                  <Icon size={13} strokeWidth={1.5} style={{ color: "var(--gold)" }} />
+                </span>
+                {label}
+              </a>
+            ))}
           </div>
         </div>
       </div>

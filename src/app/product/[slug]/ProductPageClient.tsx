@@ -442,7 +442,7 @@ export default function ProductPageClient({ slug, wcProduct }: Props) {
 
               {/* CENTER sword stage — overflow visible so large images don't clip */}
               <div
-                className="flex flex-col items-center justify-center"
+                className="flex flex-col items-center justify-center lg:-translate-x-8 lg:-translate-y-6"
                 style={{ alignSelf: "stretch", position: "relative", overflow: "visible" }}
               >
                 <motion.div
@@ -665,7 +665,7 @@ export default function ProductPageClient({ slug, wcProduct }: Props) {
             href={waHref}
             target="_blank" rel="noopener noreferrer"
             className="flex items-center justify-center gap-2"
-            style={{ height: 52, borderRadius: 10, backgroundColor: "#25D366", color: "#fff", fontSize: "0.7rem", letterSpacing: "0.14em", textTransform: "uppercase", fontWeight: 600 }}
+            style={{ height: 52, borderRadius: 10, backgroundColor: "var(--gold)", color: "var(--bg)", fontSize: "0.7rem", letterSpacing: "0.14em", textTransform: "uppercase", fontWeight: 600 }}
           >
             <MessageCircle size={16} />
             ORDER ON WHATSAPP

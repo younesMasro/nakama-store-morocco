@@ -132,10 +132,12 @@ export async function getProductBySlug(slug: string): Promise<WCProduct | null> 
     );
     return data.product ?? null;
   } catch (err) {
-    console.error(
-      `[Nakama] getProductBySlug("${slug}") failed — using static fallback.`,
-      err
-    );
+    const msg = String(err).toLowerCase();
+    // "no product id was found" = product simply doesn't exist yet — not an error
+    if (msg.includes("no product id") || msg.includes("not found")) {
+      return null;
+    }
+    console.error(`[Nakama] getProductBySlug("${slug}") failed.`, err);
     return null;
   }
 }

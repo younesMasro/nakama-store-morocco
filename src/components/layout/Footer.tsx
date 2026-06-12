@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { MessageCircle, ExternalLink, ChevronRight } from "lucide-react";
+import Image from "next/image";
+import { MessageCircle, ExternalLink, Mail } from "lucide-react";
 import { site } from "@/data/site";
 import { useTheme } from "@/components/providers/ThemeProvider";
 
@@ -33,15 +34,15 @@ export default function Footer() {
       >
         {/* Brand */}
         <div>
-          <p
-            className="font-heading uppercase"
-            style={{ fontSize: "1.15rem", letterSpacing: "0.32em", color: "var(--text)", marginBottom: "0.4rem" }}
-          >
-            NAKAMA
-          </p>
-          <p style={{ fontSize: "0.48rem", letterSpacing: "0.38em", color: "var(--gold)", opacity: 0.82, textTransform: "uppercase", marginBottom: "1rem" }}>
-            STORE MOROCCO
-          </p>
+          <Link href="/" style={{ display: "inline-block", marginBottom: "1rem" }}>
+            <Image
+              src={isBlack ? "/images/logo/logo-light.png" : "/images/logo/logo-dark.png"}
+              alt="Nakama Store Morocco"
+              width={140}
+              height={42}
+              style={{ height: 36, width: "auto", objectFit: "contain" }}
+            />
+          </Link>
           <p style={{ color: "var(--text-muted)", fontSize: "0.82rem", lineHeight: 1.65, maxWidth: "240px" }}>
             Decorative wooden katanas inspired by Japanese legends. For collectors, anime lovers, and premium room decoration.
           </p>
@@ -124,6 +125,16 @@ export default function Footer() {
             >
               <ExternalLink size={13} />
               @nakama_store_morocco
+            </a>
+            <a
+              href="mailto:contact@nakamastore.ma"
+              className="flex items-center gap-2"
+              style={{ color: "var(--text-muted)", fontSize: "0.82rem", opacity: 0.75, transition: "opacity 0.2s" }}
+              onMouseEnter={(e) => { const el = e.currentTarget as HTMLElement; el.style.opacity = "1"; el.style.color = "var(--gold)"; }}
+              onMouseLeave={(e) => { const el = e.currentTarget as HTMLElement; el.style.opacity = "0.75"; el.style.color = "var(--text-muted)"; }}
+            >
+              <Mail size={13} />
+              contact@nakamastore.ma
             </a>
           </div>
         </div>

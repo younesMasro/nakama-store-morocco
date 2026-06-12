@@ -208,7 +208,7 @@ function AccessoryCard({ acc, qty, onChange, isBundle, isBlack }: {
         <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
           <span style={{ fontSize: "0.6rem", color: "var(--gold)", opacity: 0.8 }}>{acc.price} DH</span>
           {isBundle && (
-            <span style={{ fontSize: "0.48rem", backgroundColor: "rgba(34,197,94,0.14)", color: "#22c55e", padding: "1px 6px", borderRadius: 4, letterSpacing: "0.08em" }}>
+            <span style={{ fontSize: "0.48rem", backgroundColor: "rgba(185,154,91,0.14)", color: "var(--gold)", padding: "1px 6px", borderRadius: 4, letterSpacing: "0.08em" }}>
               × 1 FREE WITH BUNDLE
             </span>
           )}
@@ -409,7 +409,7 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
                     >
                       <Gift size={15} strokeWidth={1.5} style={{ color: "var(--gold)", flexShrink: 0, marginTop: 1 }} />
                       <p style={{ fontSize: "0.68rem", color: "var(--gold)", lineHeight: 1.55 }}>
-                        <strong>Bundle deal!</strong> Black + White Dragon — <span style={{ color: "#22c55e" }}>Double Display Stand offered FREE.</span>
+                        <strong>Bundle deal!</strong> Black + White Dragon — <span style={{ color: "var(--gold)" }}>Double Display Stand offered FREE.</span>
                       </p>
                     </motion.div>
                   )}
@@ -573,7 +573,7 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
                           </span>
                           <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
                             <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", textDecoration: "line-through", opacity: 0.4 }}>99 DH</span>
-                            <span style={{ fontSize: "0.52rem", color: "#22c55e", backgroundColor: "rgba(34,197,94,0.12)", padding: "1px 6px", borderRadius: 4, letterSpacing: "0.06em" }}>FREE</span>
+                            <span style={{ fontSize: "0.52rem", color: "var(--gold)", backgroundColor: "rgba(185,154,91,0.12)", padding: "1px 6px", borderRadius: 4, letterSpacing: "0.06em" }}>FREE</span>
                           </div>
                         </div>
                       </motion.div>
@@ -581,7 +581,7 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
                   </AnimatePresence>
 
                   {/* Delivery */}
-                  <SummaryRow label="Delivery" value="FREE" valueStyle={{ color: "#22c55e", fontWeight: 600 }} />
+                  <SummaryRow label="Delivery" value="FREE" valueStyle={{ color: "var(--gold)", fontWeight: 600 }} />
                   <SummaryRow label="Delivery time" value="24H – 48H" valueStyle={{ color: "var(--text-muted)", opacity: 0.7 }} />
                   <SummaryRow label="Payment" value="Cash on delivery" valueStyle={{ color: "var(--text-muted)", opacity: 0.7 }} />
                 </div>
