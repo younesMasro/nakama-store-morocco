@@ -207,7 +207,9 @@ function AccessoryCard({ acc, qty, onChange, isBundle, isBlack }: {
   acc: AccessoryProduct; qty: number; onChange: (n: number) => void;
   isBundle: boolean; isBlack: boolean;
 }) {
+  const [imgFailed, setImgFailed] = useState(false);
   const active = qty > 0 || isBundle;
+  const showImg = !!acc.image && !imgFailed;
   return (
     <div style={{
       display: "flex", alignItems: "center", gap: "0.75rem",
@@ -218,13 +220,19 @@ function AccessoryCard({ acc, qty, onChange, isBundle, isBlack }: {
     }}>
       {/* Thumbnail */}
       <div style={{
-        width: 44, height: 44, borderRadius: 8, flexShrink: 0, overflow: "hidden",
+        width: 56, height: 56, borderRadius: 10, flexShrink: 0, overflow: "hidden",
         backgroundColor: isBlack ? "#111108" : "#f0e8d4",
-        border: "1px solid rgba(185,154,91,0.2)",
+        border: "1px solid rgba(185,154,91,0.22)",
         display: "flex", alignItems: "center", justifyContent: "center",
+        padding: showImg ? 4 : 0,
       }}>
-        {acc.image ? (
-          <img src={acc.image} alt={acc.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        {showImg ? (
+          <img
+            src={acc.image!}
+            alt={acc.name}
+            onError={() => setImgFailed(true)}
+            style={{ width: "100%", height: "100%", objectFit: "contain" }}
+          />
         ) : (
           <AccessoryIcon slug={acc.slug} />
         )}
