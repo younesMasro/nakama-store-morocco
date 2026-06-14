@@ -3,20 +3,17 @@
  * Reads WORDPRESS_GRAPHQL_URL from env — server-side only (no NEXT_PUBLIC_ prefix needed).
  */
 
+const GRAPHQL_URL =
+  process.env.WORDPRESS_GRAPHQL_URL ??
+  process.env.NEXT_PUBLIC_WORDPRESS_GRAPHQL_URL ??
+  "https://admin.nakamastore.ma/graphql";
+
 export async function fetchGraphQL<T = unknown>(
   query: string,
   variables?: Record<string, unknown>,
   revalidate?: number
 ): Promise<T> {
-  const url =
-    process.env.WORDPRESS_GRAPHQL_URL ??
-    process.env.NEXT_PUBLIC_WORDPRESS_GRAPHQL_URL;
-
-  if (!url) {
-    throw new Error(
-      "[Nakama] WORDPRESS_GRAPHQL_URL is not set. Add it to .env.local."
-    );
-  }
+  const url = GRAPHQL_URL;
 
   const res = await fetch(url, {
     method: "POST",
