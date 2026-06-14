@@ -25,6 +25,17 @@ const STATIC_DRAGONS = [
     bg:          "hero-black",
     accent:      "rgba(185,154,91,0.92)" as string,
   },
+  {
+    slug:        "white-dragon",
+    ar:          "التنين الأبيض",
+    ja:          "白い龍",
+    title:       "WHITE DRAGON",
+    tagline:     "PURE · HONOR · LIGHT",
+    description: "Refined elegance and sacred aesthetics for collectors, anime lovers, and rooms that speak with grace.",
+    price:       "1,399",
+    bg:          "hero-white",
+    accent:      "rgba(185,154,91,0.95)" as string,
+  },
 ] as const;
 
 const COMPARE = [
@@ -69,7 +80,7 @@ function mergeWithWC(
 
 /* ── DragonCard ──────────────────────────────────────────── */
 
-function DragonCard({ dragon }: { dragon: DragonData }) {
+function DragonCard({ dragon, priority }: { dragon: DragonData; priority: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const whatsappMsg = encodeURIComponent(
@@ -90,7 +101,9 @@ function DragonCard({ dragon }: { dragon: DragonData }) {
     const bg = ref.current.querySelector<HTMLElement>(".card-bg-layer");
     if (bg) { bg.style.transform = "scale(1)"; bg.style.opacity = "0.72"; }
     ref.current.style.transform = "translateY(0)";
-    ref.current.style.boxShadow = "0 8px 32px rgba(0,0,0,0.18)";
+    ref.current.style.boxShadow = priority
+      ? `0 12px 48px rgba(0,0,0,0.24), 0 0 0 1px ${dragon.accent}`
+      : "0 8px 32px rgba(0,0,0,0.18)";
   }
 
   return (
@@ -101,14 +114,18 @@ function DragonCard({ dragon }: { dragon: DragonData }) {
       onClick={() => router.push(`/product/${dragon.slug}`)}
       style={{
         position: "relative", overflow: "hidden", borderRadius: 20,
-        minHeight: "clamp(480px,60vh,640px)",
-        border: "1px solid rgba(185,154,91,0.22)",
-        boxShadow: "0 8px 32px rgba(0,0,0,0.18)",
+        minHeight: "clamp(440px,55vh,600px)",
+        border: priority
+          ? `1px solid ${dragon.accent}`
+          : "1px solid rgba(185,154,91,0.22)",
+        boxShadow: priority
+          ? `0 12px 48px rgba(0,0,0,0.24), 0 0 0 1px ${dragon.accent}`
+          : "0 8px 32px rgba(0,0,0,0.18)",
         transition: "transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94), box-shadow 0.45s ease",
         cursor: "pointer", display: "flex", flexDirection: "column", justifyContent: "flex-end",
       }}
     >
-      {/* Background image — WC product image takes priority over static hero */}
+      {/* Background */}
       <div
         className="card-bg-layer"
         style={{
@@ -121,7 +138,6 @@ function DragonCard({ dragon }: { dragon: DragonData }) {
           transition: "transform 0.55s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.55s ease",
         }}
       />
-      {/* Gradient overlay */}
       <div style={{
         position: "absolute", inset: 0, zIndex: 1,
         background: "linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.15) 35%, rgba(0,0,0,0.72) 100%)",
@@ -132,14 +148,25 @@ function DragonCard({ dragon }: { dragon: DragonData }) {
         <p className="arabic-kicker" style={{ fontSize: "clamp(1.1rem,2.2vw,1.5rem)", textShadow: "0 2px 16px rgba(0,0,0,0.6)" }}>
           {dragon.ar}
         </p>
-        <span style={{
-          padding: "4px 14px", borderRadius: 999,
-          border: `1px solid ${dragon.accent}`, color: dragon.accent,
-          fontSize: "0.52rem", letterSpacing: "0.22em", textTransform: "uppercase",
-          backgroundColor: "rgba(0,0,0,0.28)", backdropFilter: "blur(6px)",
-        }}>
-          AVAILABLE
-        </span>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
+          {priority && (
+            <span style={{
+              padding: "3px 12px", borderRadius: 999,
+              backgroundColor: dragon.accent, color: "#0a0a0a",
+              fontSize: "0.48rem", letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 700,
+            }}>
+              SELECTED
+            </span>
+          )}
+          <span style={{
+            padding: "4px 14px", borderRadius: 999,
+            border: `1px solid ${dragon.accent}`, color: dragon.accent,
+            fontSize: "0.52rem", letterSpacing: "0.22em", textTransform: "uppercase",
+            backgroundColor: "rgba(0,0,0,0.28)", backdropFilter: "blur(6px)",
+          }}>
+            AVAILABLE
+          </span>
+        </div>
       </div>
 
       {/* Bottom content */}
@@ -161,7 +188,6 @@ function DragonCard({ dragon }: { dragon: DragonData }) {
           {dragon.description}
         </p>
 
-        {/* Price */}
         <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: "1.25rem" }}>
           <span className="font-heading" style={{ fontSize: "2rem", color: "#ffffff", letterSpacing: "0.02em" }}>
             {dragon.price}
@@ -169,7 +195,6 @@ function DragonCard({ dragon }: { dragon: DragonData }) {
           <span style={{ color: dragon.accent, fontSize: "0.58rem", letterSpacing: "0.22em" }}>DH</span>
         </div>
 
-        {/* CTAs */}
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
           <Link
             href={`/product/${dragon.slug}`}
@@ -215,8 +240,12 @@ export default function CatalogueClient({ wcProducts }: { wcProducts: WCProduct[
   const isBlack = theme === "black-dragon";
   const whatsappHref = `https://wa.me/${site.whatsapp.replace(/\D/g, "")}`;
 
-  // Merge WC data into static dragon definitions
   const dragons = STATIC_DRAGONS.map((d) => mergeWithWC(d, wcProducts));
+
+  // Active theme dragon appears first
+  const sorted = isBlack
+    ? [dragons[0], dragons[1]]
+    : [dragons[1], dragons[0]];
 
   return (
     <PageShell>
@@ -268,16 +297,15 @@ export default function CatalogueClient({ wcProducts }: { wcProducts: WCProduct[
         </div>
       </section>
 
-      {/* Dragon cards */}
+      {/* Dragon cards — active theme first */}
       <section style={{ padding: "0 clamp(1.25rem,4vw,3.5rem) clamp(2.5rem,5vw,4rem)" }}>
         <div style={{
           display: "grid",
-          gridTemplateColumns: "minmax(0, 680px)",
-          justifyContent: "center",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 520px), 1fr))",
           gap: "clamp(1.25rem,2.5vw,2rem)",
           maxWidth: 1160, margin: "0 auto",
         }}>
-          {dragons.map((dragon, i) => (
+          {sorted.map((dragon, i) => (
             <motion.div
               key={dragon.slug}
               initial={{ opacity: 0, y: 40 }}
@@ -285,7 +313,7 @@ export default function CatalogueClient({ wcProducts }: { wcProducts: WCProduct[
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.75, ease: "easeOut", delay: i * 0.14 }}
             >
-              <DragonCard dragon={dragon} />
+              <DragonCard dragon={dragon} priority={i === 0} />
             </motion.div>
           ))}
         </div>
@@ -376,7 +404,7 @@ export default function CatalogueClient({ wcProducts }: { wcProducts: WCProduct[
             <MessageCircle size={14} /> ORDER ON WHATSAPP
           </a>
           <Link
-            href="/product/black-dragon"
+            href={`/product/${isBlack ? "black-dragon" : "white-dragon"}`}
             className="flex items-center gap-1.5 transition-all duration-300"
             style={{
               height: 50, padding: "0 24px", borderRadius: 8,
