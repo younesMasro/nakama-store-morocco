@@ -9,15 +9,16 @@ export default async function Home() {
     getProductBySlug("white-dragon"),
   ]);
 
-  const heroImageUrl = black?.image?.sourceUrl ?? null;
+  const heroBlackImageUrl = black?.image?.sourceUrl ?? null;
+  const heroWhiteImageUrl = white?.image?.sourceUrl ?? null;
   const collectionImages = {
-    "black-dragon": black?.image?.sourceUrl ?? null,
-    "white-dragon": white?.image?.sourceUrl ?? null,
+    "black-dragon": heroBlackImageUrl,
+    "white-dragon": heroWhiteImageUrl,
   };
 
   return (
     <>
-      <HeroSection heroImageUrl={heroImageUrl} />
+      <HeroSection heroImageUrl={heroBlackImageUrl} heroWhiteImageUrl={heroWhiteImageUrl} />
       <HomeCollection images={collectionImages} />
       <HomeCraft />
     </>

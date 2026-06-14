@@ -145,10 +145,17 @@ function SideControls({
    MAIN COMPONENT
 ═══════════════════════════════════════════════════════════ */
 
-export default function HeroSection({ heroImageUrl = null }: { heroImageUrl?: string | null }) {
+export default function HeroSection({
+  heroImageUrl = null,
+  heroWhiteImageUrl = null,
+}: {
+  heroImageUrl?: string | null;
+  heroWhiteImageUrl?: string | null;
+}) {
   const { theme } = useTheme();
   const isBlack = theme === "black-dragon";
   const c = CONTENT[theme];
+  const currentImageUrl = isBlack ? heroImageUrl : heroWhiteImageUrl;
   const [zoom, setZoom]               = useState(1.0);
   const [isFocusMode, setIsFocusMode] = useState(false);
 
@@ -317,10 +324,11 @@ export default function HeroSection({ heroImageUrl = null }: { heroImageUrl?: st
                 transition={{ duration: 1.2, ease: "easeOut", delay: .3 }}
                 className="flex flex-col items-center"
               >
-                {heroImageUrl && isBlack && (
+                {currentImageUrl && (
                   <motion.img
-                    src={heroImageUrl}
-                    alt="Black Dragon Katana"
+                    key={`mob-img-${theme}`}
+                    src={currentImageUrl}
+                    alt={`${c.title.replace("\n", " ")} Katana`}
                     fetchPriority="high"
                     animate={{ scale: zoom }}
                     transition={{ duration: 0.25, ease: "easeOut" }}
@@ -330,11 +338,13 @@ export default function HeroSection({ heroImageUrl = null }: { heroImageUrl?: st
                       maxWidth: "min(62vw, 320px)",
                       objectFit: "contain",
                       display: "block",
-                      filter: "drop-shadow(0 28px 64px rgba(0,0,0,0.68)) drop-shadow(0 0 22px rgba(185,154,91,0.12))",
+                      filter: isBlack
+                        ? "drop-shadow(0 28px 64px rgba(0,0,0,0.68)) drop-shadow(0 0 22px rgba(185,154,91,0.12))"
+                        : "drop-shadow(0 28px 60px rgba(95,65,30,0.24)) drop-shadow(0 0 26px rgba(185,154,91,0.18))",
                     }}
                   />
                 )}
-                <div style={{ marginTop: heroImageUrl && isBlack ? -12 : 0 }}>
+                <div style={{ marginTop: currentImageUrl ? -12 : 0 }}>
                   <PlatformRings isBlack={isBlack} />
                 </div>
               </motion.div>
@@ -475,10 +485,11 @@ export default function HeroSection({ heroImageUrl = null }: { heroImageUrl?: st
                 transition={{ duration: 1.2, ease: "easeOut", delay: .35 }}
                 className="flex flex-col items-center"
               >
-                {heroImageUrl && isBlack && (
+                {currentImageUrl && (
                   <motion.img
-                    src={heroImageUrl}
-                    alt="Black Dragon Katana"
+                    key={`desk-img-${theme}`}
+                    src={currentImageUrl}
+                    alt={`${c.title.replace("\n", " ")} Katana`}
                     fetchPriority="high"
                     animate={{ scale: zoom }}
                     transition={{ duration: 0.25, ease: "easeOut" }}
@@ -495,7 +506,7 @@ export default function HeroSection({ heroImageUrl = null }: { heroImageUrl?: st
                     }}
                   />
                 )}
-                <div style={{ marginTop: heroImageUrl && isBlack ? -12 : 0 }}>
+                <div style={{ marginTop: currentImageUrl ? -12 : 0 }}>
                   <PlatformRings isBlack={isBlack} />
                 </div>
               </motion.div>
