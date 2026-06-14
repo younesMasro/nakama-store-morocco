@@ -175,6 +175,34 @@ function KatanaRow({ slug, unit, qty, onChange, sectionLine }: {
   );
 }
 
+function AccessoryIcon({ slug }: { slug: string }) {
+  const g = "var(--gold)";
+  if (slug === "wall-mount") return (
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke={g} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" opacity={0.75}>
+      <rect x="2" y="3" width="4" height="18" rx="1"/>
+      <path d="M6 8h10a2 2 0 0 1 2 2v0a2 2 0 0 1-2 2H6"/>
+      <line x1="16" y1="12" x2="16" y2="17"/>
+      <line x1="13" y1="17" x2="19" y2="17"/>
+    </svg>
+  );
+  if (slug === "double-display-stand") return (
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke={g} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" opacity={0.75}>
+      <line x1="7" y1="3" x2="7" y2="17"/>
+      <line x1="14" y1="3" x2="14" y2="17"/>
+      <path d="M4 17h6M11 17h6"/>
+      <path d="M5 20h4M12 20h4"/>
+    </svg>
+  );
+  /* display-stand default */
+  return (
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke={g} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" opacity={0.75}>
+      <line x1="12" y1="3" x2="12" y2="17"/>
+      <path d="M7 17h10"/>
+      <path d="M9 20h6"/>
+    </svg>
+  );
+}
+
 function AccessoryCard({ acc, qty, onChange, isBundle, isBlack }: {
   acc: AccessoryProduct; qty: number; onChange: (n: number) => void;
   isBundle: boolean; isBlack: boolean;
@@ -198,7 +226,7 @@ function AccessoryCard({ acc, qty, onChange, isBundle, isBlack }: {
         {acc.image ? (
           <img src={acc.image} alt={acc.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
         ) : (
-          <Package size={16} strokeWidth={1} style={{ color: "var(--gold)", opacity: 0.45 }} />
+          <AccessoryIcon slug={acc.slug} />
         )}
       </div>
 
