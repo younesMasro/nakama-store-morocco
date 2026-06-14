@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, type Variants } from "framer-motion";
 import Link from "next/link";
 import {
@@ -155,7 +155,36 @@ export default function HeroSection({
   const { theme } = useTheme();
   const isBlack = theme === "black-dragon";
   const c = CONTENT[theme];
-  const currentImageUrl = isBlack ? heroImageUrl : heroWhiteImageUrl;
+
+  // Client-side fallback: fetch images directly from the browser so Hostinger's
+  // server-to-server block on admin.nakamastore.ma doesn't prevent images from loading.
+  const [clientImages, setClientImages] = useState<{ black: string | null; white: string | null }>({ black: null, white: null });
+  useEffect(() => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 8000);
+    fetch("https://admin.nakamastore.ma/graphql", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query: `{ black: product(id:"black-dragon",idType:SLUG){image{sourceUrl}} white: product(id:"white-dragon",idType:SLUG){image{sourceUrl}} }`,
+      }),
+      signal: controller.signal,
+    })
+      .then((r) => r.json())
+      .then((d) => {
+        clearTimeout(timer);
+        setClientImages({
+          black: d?.data?.black?.image?.sourceUrl ?? null,
+          white: d?.data?.white?.image?.sourceUrl ?? null,
+        });
+      })
+      .catch(() => clearTimeout(timer));
+    return () => { clearTimeout(timer); controller.abort(); };
+  }, []);
+
+  const currentImageUrl = isBlack
+    ? (heroImageUrl ?? clientImages.black)
+    : (heroWhiteImageUrl ?? clientImages.white);
   const [zoom, setZoom]               = useState(1.0);
   const [isFocusMode, setIsFocusMode] = useState(false);
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
@@ -33,6 +34,30 @@ interface Props {
 export default function HomeCollection({ images = {} }: Props) {
   const { theme } = useTheme();
   const isBlack = theme === "black-dragon";
+
+  const [clientImages, setClientImages] = useState<typeof images>({});
+  useEffect(() => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 8000);
+    fetch("https://admin.nakamastore.ma/graphql", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query: `{ black: product(id:"black-dragon",idType:SLUG){image{sourceUrl}} white: product(id:"white-dragon",idType:SLUG){image{sourceUrl}} }`,
+      }),
+      signal: controller.signal,
+    })
+      .then((r) => r.json())
+      .then((d) => {
+        clearTimeout(timer);
+        setClientImages({
+          "black-dragon": d?.data?.black?.image?.sourceUrl ?? null,
+          "white-dragon": d?.data?.white?.image?.sourceUrl ?? null,
+        });
+      })
+      .catch(() => clearTimeout(timer));
+    return () => { clearTimeout(timer); controller.abort(); };
+  }, []);
 
   return (
     <section
@@ -71,7 +96,7 @@ export default function HomeCollection({ images = {} }: Props) {
         }}
       >
         {DRAGONS.map(({ slug, ar, ja, title, tagline, desc, bg }, i) => {
-          const imgSrc = images[slug] ?? null;
+          const imgSrc = images[slug] ?? clientImages[slug] ?? null;
           return (
           <motion.div
             key={slug}
