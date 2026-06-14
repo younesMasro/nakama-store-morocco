@@ -13,7 +13,6 @@ export interface WCProduct {
   image: { sourceUrl: string } | null;
   galleryImages: { nodes: { sourceUrl: string }[] };
   productCategories: { nodes: { name: string; slug: string }[] };
-  // Present only on SimpleProduct via inline fragment
   price?: string | null;
   regularPrice?: string | null;
   salePrice?: string | null;
@@ -29,7 +28,6 @@ interface ProductData {
 
 /* ── Helpers ──────────────────────────────────────────────── */
 
-/** Strip HTML tags from WooCommerce description strings. */
 export function stripHtml(html: string | null | undefined): string {
   if (!html) return "";
   return html
@@ -44,15 +42,9 @@ export function stripHtml(html: string | null | undefined): string {
     .trim();
 }
 
-/**
- * Extract a clean numeric price string from WooCommerce price output.
- * WC can return: "1,399.00 DH", "<span>1,399.00</span>", "1 399,00 MAD", etc.
- * Returns the numeric part only (e.g. "1,399") or null if unparseable.
- */
 export function formatPrice(raw: string | null | undefined): string | null {
   if (!raw) return null;
   const text = stripHtml(raw);
-  // Extract first numeric sequence (digits, commas, dots)
   const match = text.match(/([\d\s,]+(?:\.\d{1,2})?)/);
   if (!match) return text;
   return match[1]
@@ -60,6 +52,50 @@ export function formatPrice(raw: string | null | undefined): string | null {
     .replace(/\.00$/, "")
     .replace(/,00$/, "")
     .trim();
+}
+
+/* ── Disk cache (server-side only) ───────────────────────── */
+
+const CACHE_TTL = 24 * 60 * 60 * 1000;
+
+function getCachePath(): string {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const path = require("path") as typeof import("path");
+  return path.join(process.cwd(), ".nakama-cache", "products.json");
+}
+
+function readCache(): WCProduct[] | null {
+  if (typeof window !== "undefined") return null;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const fs = require("fs") as typeof import("fs");
+    const file = getCachePath();
+    if (!fs.existsSync(file)) return null;
+    const raw = JSON.parse(fs.readFileSync(file, "utf-8")) as { products: WCProduct[]; savedAt: number };
+    if (Date.now() - raw.savedAt > CACHE_TTL) return null;
+    return raw.products;
+  } catch {
+    return null;
+  }
+}
+
+function writeCache(products: WCProduct[]): void {
+  if (typeof window !== "undefined") return;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const fs   = require("fs")   as typeof import("fs");
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const path = require("path") as typeof import("path");
+    const dir  = path.join(process.cwd(), ".nakama-cache");
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(
+      path.join(dir, "products.json"),
+      JSON.stringify({ products, savedAt: Date.now() }),
+      "utf-8"
+    );
+  } catch (e) {
+    console.error("[Nakama] Failed to write product cache:", e);
+  }
 }
 
 /* ── Accessory product type ───────────────────────────────── */
@@ -73,31 +109,30 @@ export interface AccessoryProduct {
 }
 
 const ACCESSORY_FALLBACK: AccessoryProduct[] = [
-  { databaseId: 0, slug: "display-stand",        name: "Display Stand",        price: 99, image: null },
-  { databaseId: 0, slug: "double-display-stand",  name: "Double Display Stand", price: 99, image: null },
-  { databaseId: 0, slug: "wall-mount",            name: "Wall Mount",           price: 99, image: null },
+  { databaseId: 0, slug: "display-stand",       name: "Display Stand",        price: 99, image: null },
+  { databaseId: 0, slug: "double-display-stand", name: "Double Display Stand", price: 99, image: null },
+  { databaseId: 0, slug: "wall-mount",           name: "Wall Mount",           price: 99, image: null },
 ];
 
 /* ── Product fetchers ─────────────────────────────────────── */
 
-/**
- * Fetch all published WooCommerce products.
- * Returns [] if the endpoint is unreachable or WooGraphQL is inactive.
- */
 export async function getProducts(): Promise<WCProduct[]> {
   try {
     const data = await fetchGraphQL<ProductsData>(GET_PRODUCTS, undefined, 3600);
-    return data.products?.nodes ?? [];
+    const products = data.products?.nodes ?? [];
+    if (products.length > 0) writeCache(products);
+    return products;
   } catch (err) {
-    console.error("[Nakama] getProducts() failed — using static fallback.", err);
+    console.error("[Nakama] getProducts() failed.", err);
+    const cached = readCache();
+    if (cached) {
+      console.log("[Nakama] Using disk-cached product data.");
+      return cached;
+    }
     return [];
   }
 }
 
-/**
- * Fetch accessories (products in the "accessories" category).
- * Falls back to a static list if API unavailable or category is empty.
- */
 export async function getAccessoriesProducts(): Promise<AccessoryProduct[]> {
   try {
     const all = await getProducts();
@@ -119,25 +154,16 @@ export async function getAccessoriesProducts(): Promise<AccessoryProduct[]> {
   }
 }
 
-/**
- * Fetch a single WooCommerce product by slug.
- * Returns null if not found or on any error.
- */
 export async function getProductBySlug(slug: string): Promise<WCProduct | null> {
   try {
-    const data = await fetchGraphQL<ProductData>(
-      GET_PRODUCT_BY_SLUG,
-      { slug },
-      3600
-    );
+    const data = await fetchGraphQL<ProductData>(GET_PRODUCT_BY_SLUG, { slug }, 3600);
     return data.product ?? null;
   } catch (err) {
     const msg = String(err).toLowerCase();
-    // "no product id was found" = product simply doesn't exist yet — not an error
-    if (msg.includes("no product id") || msg.includes("not found")) {
-      return null;
-    }
+    if (msg.includes("no product id") || msg.includes("not found")) return null;
     console.error(`[Nakama] getProductBySlug("${slug}") failed.`, err);
+    const cached = readCache();
+    if (cached) return cached.find((p) => p.slug === slug) ?? null;
     return null;
   }
 }
