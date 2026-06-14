@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -277,6 +277,47 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
     setAccessoryQtys((prev) => ({ ...prev, [slug]: Math.max(0, Math.min(20, qty)) }));
   }, []);
 
+  /* ── Client-side accessory images (bypasses Hostinger server-to-server block) ── */
+  const [liveAccessories, setLiveAccessories] = useState<AccessoryProduct[]>(accessories);
+  useEffect(() => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 8000);
+    fetch("https://admin.nakamastore.ma/graphql", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query: `{
+          products(first: 20, where: { status: "publish" }) {
+            nodes {
+              slug
+              image { sourceUrl }
+              productCategories { nodes { slug } }
+              ... on SimpleProduct { price }
+            }
+          }
+        }`,
+      }),
+      signal: controller.signal,
+    })
+      .then((r) => r.json())
+      .then((d) => {
+        clearTimeout(timer);
+        const nodes = d?.data?.products?.nodes ?? [];
+        const accNodes = nodes.filter((p: { productCategories?: { nodes?: { slug: string }[] } }) =>
+          p.productCategories?.nodes?.some((c: { slug: string }) => c.slug === "accessories")
+        );
+        if (!accNodes.length) return;
+        setLiveAccessories((prev) =>
+          prev.map((acc) => {
+            const match = accNodes.find((n: { slug: string }) => n.slug === acc.slug);
+            return match ? { ...acc, image: match.image?.sourceUrl ?? acc.image } : acc;
+          })
+        );
+      })
+      .catch(() => clearTimeout(timer));
+    return () => { clearTimeout(timer); controller.abort(); };
+  }, []);
+
   /* ── Contact / delivery ── */
   const [fullName, setFullName] = useState("");
   const [phone,    setPhone]    = useState("");
@@ -292,11 +333,11 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
 
   /* ── Bundle & totals ── */
   const hasBundle      = blackQty >= 1 && whiteQty >= 1;
-  const freeGiftAcc    = accessories.find((a) => a.slug === "double-display-stand");
+  const freeGiftAcc    = liveAccessories.find((a) => a.slug === "double-display-stand");
   const katanaTotal    = blackQty * blackUnit + whiteQty * whiteUnit;
   const accessoryTotal = useMemo(
-    () => accessories.reduce((sum, a) => sum + a.price * (accessoryQtys[a.slug] ?? 0), 0),
-    [accessories, accessoryQtys]
+    () => liveAccessories.reduce((sum, a) => sum + a.price * (accessoryQtys[a.slug] ?? 0), 0),
+    [liveAccessories, accessoryQtys]
   );
   const grandTotal = katanaTotal + accessoryTotal;
 
@@ -318,7 +359,7 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
     if (!validate()) return;
     setLoading(true); setApiErr("");
 
-    const accessoriesPayload = accessories
+    const accessoriesPayload = liveAccessories
       .filter((a) => (accessoryQtys[a.slug] ?? 0) > 0)
       .map((a) => ({ slug: a.slug, databaseId: a.databaseId, quantity: accessoryQtys[a.slug] }));
 
@@ -343,7 +384,7 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
           name:       fullName,
           blackQty,   whiteQty,
           blackUnit,  whiteUnit,
-          accessories: accessories
+          accessories: liveAccessories
             .filter((a) => (accessoryQtys[a.slug] ?? 0) > 0)
             .map((a) => ({ name: a.name, quantity: accessoryQtys[a.slug], price: a.price })),
           hasBundle,
@@ -449,7 +490,7 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
               </div>
 
               {/* Accessories */}
-              {accessories.length > 0 && (
+              {liveAccessories.length > 0 && (
                 <div style={{ borderRadius: 18, border: `1px solid ${cardBorder}`, backgroundColor: cardBg, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", padding: "1.5rem 1.75rem", display: "flex", flexDirection: "column", gap: "1.1rem" }}>
                   <div>
                     <SectionLabel>COMPLETE YOUR SETUP</SectionLabel>
@@ -458,7 +499,7 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
                     </p>
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem" }}>
-                    {accessories.map((acc) => (
+                    {liveAccessories.map((acc) => (
                       <AccessoryCard
                         key={acc.slug}
                         acc={acc}
@@ -580,7 +621,7 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
                   )}
 
                   {/* Accessories */}
-                  {accessories.map((a) => {
+                  {liveAccessories.map((a) => {
                     const q = accessoryQtys[a.slug] ?? 0;
                     if (q === 0) return null;
                     return <SummaryRow key={a.slug} label={`${a.name} × ${q}`} value={`${fmt(a.price * q)} DH`} />;
