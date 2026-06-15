@@ -298,17 +298,13 @@ export default function ProductPageClient({ slug, wcProduct }: Props) {
               </motion.div>
 
               {/* Image — absolute centered, pointer-events-none so controls receive touches */}
-              <div className="absolute inset-0 flex flex-col items-center"
-                style={{
-                  paddingBottom: activeThumb > 0 ? 90 : 68,
-                  paddingTop:    activeThumb > 0 ? 0  : 0,
-                  pointerEvents: "none",
-                  justifyContent: activeThumb > 0 ? "flex-end" : "center",
-                }}>
+              <div className="absolute inset-0 flex flex-col items-center justify-center"
+                style={{ paddingBottom: 68, pointerEvents: "none" }}>
                 <motion.div
                   key={`m-stage-${slug}`}
-                  initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 1.2, ease: "easeOut", delay: .3 }}
+                  initial={{ opacity: 0, y: 22 }}
+                  animate={{ opacity: 1, y: activeThumb > 0 ? 65 : 0 }}
+                  transition={{ duration: activeThumb > 0 ? 0.45 : 1.2, ease: "easeOut", delay: activeThumb > 0 ? 0 : .3 }}
                   className="flex flex-col items-center"
                 >
                   {activeImage ? (
@@ -321,10 +317,10 @@ export default function ProductPageClient({ slug, wcProduct }: Props) {
                       transition={{ duration: 0.25, ease: "easeOut" }}
                       style={{
                         height: activeThumb > 0
-                          ? "clamp(240px, 38svh, 380px)"
+                          ? "clamp(200px, 30svh, 300px)"
                           : "clamp(440px, 62svh, 680px)",
                         width: "auto",
-                        maxWidth: activeThumb > 0 ? "min(72vw, 360px)" : "min(64vw, 340px)",
+                        maxWidth: activeThumb > 0 ? "min(76vw, 380px)" : "min(64vw, 340px)",
                         objectFit: "contain",
                         display: "block",
                         transformOrigin: "center bottom",
