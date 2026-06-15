@@ -113,7 +113,7 @@ export default function ProductPageClient({ slug, wcProduct }: Props) {
   const st = STATIC[slug as ValidSlug] ?? STATIC["black-dragon"];
   const isBlack = st.bgKey === "black";
 
-  const [activeThumb, setActiveThumb] = useState(0);
+  const [activeThumb, setActiveThumb] = useState(-1);
   const [zoom, setZoom]               = useState(1.0);
   const [isFocusMode, setIsFocusMode] = useState(false);
   const [cartAdded, setCartAdded]     = useState(false);
@@ -149,7 +149,9 @@ export default function ProductPageClient({ slug, wcProduct }: Props) {
     ...(wcProduct?.galleryImages?.nodes?.map((n) => n.sourceUrl) ?? []),
   ];
   const allImages   = Array.from(new Set(rawUrls));
-  const activeImage = allImages[activeThumb] ?? null;
+  const mobileActiveImage  = activeThumb >= 0 ? (allImages[activeThumb] ?? null) : null;
+  const desktopActiveImage = allImages[Math.max(0, activeThumb)] ?? null;
+  const activeImage = mobileActiveImage; // kept for any shared references
 
   useEffect(() => {
     setTheme(slug === "white-dragon" ? "white-dragon" : "black-dragon");
@@ -297,11 +299,7 @@ export default function ProductPageClient({ slug, wcProduct }: Props) {
                       }}
                     />
                   ) : (
-                    <div style={{ height: "clamp(440px,62svh,680px)", display: "flex", alignItems: "center" }}>
-                      <p style={{ color: "var(--gold)", fontSize: "0.58rem", letterSpacing: "0.24em", opacity: .38 }}>
-                        IMAGE COMING SOON
-                      </p>
-                    </div>
+                    <div style={{ height: "clamp(440px,62svh,680px)" }} />
                   )}
                   <div style={{ marginTop: activeImage ? -10 : 0 }}>
                     <PlatformRings />
@@ -391,10 +389,10 @@ export default function ProductPageClient({ slug, wcProduct }: Props) {
                   className="flex flex-col items-center"
                   style={{ overflow: "visible" }}
                 >
-                  {activeImage ? (
+                  {desktopActiveImage ? (
                     <motion.img
-                      key={activeImage}
-                      src={activeImage}
+                      key={desktopActiveImage}
+                      src={desktopActiveImage}
                       alt={productName}
                       fetchPriority="high"
                       animate={{ scale: zoom }}
@@ -414,11 +412,9 @@ export default function ProductPageClient({ slug, wcProduct }: Props) {
                       }}
                     />
                   ) : (
-                    <div style={{ height: "clamp(560px,82svh,920px)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <p style={{ color: "var(--gold)", fontSize: "0.6rem", letterSpacing: "0.28em", textTransform: "uppercase", opacity: .38 }}>IMAGE COMING SOON</p>
-                    </div>
+                    <div style={{ height: "clamp(560px,82svh,920px)" }} />
                   )}
-                  <div style={{ marginTop: activeImage ? -14 : 0 }}>
+                  <div style={{ marginTop: desktopActiveImage ? -14 : 0 }}>
                     <PlatformRings />
                   </div>
                 </motion.div>
