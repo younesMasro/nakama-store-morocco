@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, type Variants } from "framer-motion";
 import Link from "next/link";
 import {
   Eye, EyeOff, Plus, Minus, Share2,
-  ArrowLeft,
+  ArrowLeft, ChevronLeft, ChevronRight,
   Phone, LayoutGrid, Info, Star,
   Shield, Ruler, Package, Truck, ShoppingCart, Check,
 } from "lucide-react";
@@ -113,10 +113,24 @@ export default function ProductPageClient({ slug, wcProduct }: Props) {
   const st = STATIC[slug as ValidSlug] ?? STATIC["black-dragon"];
   const isBlack = st.bgKey === "black";
 
-  const [activeThumb, setActiveThumb] = useState(-1);
-  const [zoom, setZoom]               = useState(1.0);
-  const [isFocusMode, setIsFocusMode] = useState(false);
-  const [cartAdded, setCartAdded]     = useState(false);
+  const [activeThumb, setActiveThumb]     = useState(-1);
+  const [zoom, setZoom]                   = useState(1.0);
+  const [isFocusMode, setIsFocusMode]     = useState(false);
+  const [cartAdded, setCartAdded]         = useState(false);
+  const [canScrollLeft, setCanScrollLeft]   = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const thumbScrollRef = useRef<HTMLDivElement>(null);
+
+  const checkThumbScroll = useCallback(() => {
+    const el = thumbScrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 4);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
+  }, []);
+
+  const scrollThumbs = (dir: "left" | "right") => {
+    thumbScrollRef.current?.scrollBy({ left: dir === "right" ? 110 : -110, behavior: "smooth" });
+  };
 
   function handleAddToCart() {
     const priceNum = parseInt(priceStr.replace(/[^0-9]/g, ""), 10) || 1399;
@@ -156,6 +170,18 @@ export default function ProductPageClient({ slug, wcProduct }: Props) {
   useEffect(() => {
     setTheme(slug === "white-dragon" ? "white-dragon" : "black-dragon");
   }, [slug, setTheme]);
+
+  useEffect(() => {
+    const el = thumbScrollRef.current;
+    if (!el) return;
+    checkThumbScroll();
+    el.addEventListener("scroll", checkThumbScroll, { passive: true });
+    window.addEventListener("resize", checkThumbScroll);
+    return () => {
+      el.removeEventListener("scroll", checkThumbScroll);
+      window.removeEventListener("resize", checkThumbScroll);
+    };
+  }, [allImages, checkThumbScroll]);
 
   const productName = wcProduct?.name ?? st.title.replace("\n", " ");
   const description = wcProduct?.shortDescription
@@ -272,8 +298,13 @@ export default function ProductPageClient({ slug, wcProduct }: Props) {
               </motion.div>
 
               {/* Image — absolute centered, pointer-events-none so controls receive touches */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center"
-                style={{ paddingBottom: 68, pointerEvents: "none" }}>
+              <div className="absolute inset-0 flex flex-col items-center"
+                style={{
+                  paddingBottom: activeThumb > 0 ? 90 : 68,
+                  paddingTop:    activeThumb > 0 ? 0  : 0,
+                  pointerEvents: "none",
+                  justifyContent: activeThumb > 0 ? "flex-end" : "center",
+                }}>
                 <motion.div
                   key={`m-stage-${slug}`}
                   initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }}
@@ -289,9 +320,11 @@ export default function ProductPageClient({ slug, wcProduct }: Props) {
                       animate={{ scale: zoom }}
                       transition={{ duration: 0.25, ease: "easeOut" }}
                       style={{
-                        height: "clamp(440px, 62svh, 680px)",
+                        height: activeThumb > 0
+                          ? "clamp(240px, 38svh, 380px)"
+                          : "clamp(440px, 62svh, 680px)",
                         width: "auto",
-                        maxWidth: "min(64vw, 340px)",
+                        maxWidth: activeThumb > 0 ? "min(72vw, 360px)" : "min(64vw, 340px)",
                         objectFit: "contain",
                         display: "block",
                         transformOrigin: "center bottom",
@@ -482,8 +515,54 @@ export default function ProductPageClient({ slug, wcProduct }: Props) {
         <section style={{
           backgroundColor: isBlack ? "rgba(5,5,5,0.95)" : "rgba(248,243,235,0.96)",
           borderBottom: "1px solid rgba(185,154,91,0.14)",
+          position: "relative",
         }}>
-          <div style={{ padding: "0.9rem clamp(1.5rem,5vw,4rem)", overflowX: "auto", scrollbarWidth: "none" }}>
+          {/* Mobile-only left arrow */}
+          {canScrollLeft && (
+            <button
+              aria-label="Scroll thumbnails left"
+              onClick={() => scrollThumbs("left")}
+              className="md:hidden"
+              style={{
+                position: "absolute", left: 6, top: "50%", transform: "translateY(-50%)",
+                zIndex: 20, width: 36, height: 36, borderRadius: "50%", flexShrink: 0,
+                border: "1px solid rgba(185,154,91,0.35)",
+                backgroundColor: isBlack ? "rgba(10,10,8,0.72)" : "rgba(255,250,240,0.82)",
+                backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)",
+                color: "var(--gold)", display: "flex", alignItems: "center", justifyContent: "center",
+                cursor: "pointer", boxShadow: "0 2px 12px rgba(0,0,0,0.28)",
+                transition: "opacity 0.25s ease",
+              }}
+            >
+              <ChevronLeft size={15} strokeWidth={1.5} />
+            </button>
+          )}
+
+          {/* Mobile-only right arrow */}
+          {canScrollRight && (
+            <button
+              aria-label="Scroll thumbnails right"
+              onClick={() => scrollThumbs("right")}
+              className="md:hidden"
+              style={{
+                position: "absolute", right: 6, top: "50%", transform: "translateY(-50%)",
+                zIndex: 20, width: 36, height: 36, borderRadius: "50%", flexShrink: 0,
+                border: "1px solid rgba(185,154,91,0.35)",
+                backgroundColor: isBlack ? "rgba(10,10,8,0.72)" : "rgba(255,250,240,0.82)",
+                backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)",
+                color: "var(--gold)", display: "flex", alignItems: "center", justifyContent: "center",
+                cursor: "pointer", boxShadow: "0 2px 12px rgba(0,0,0,0.28)",
+                transition: "opacity 0.25s ease",
+              }}
+            >
+              <ChevronRight size={15} strokeWidth={1.5} />
+            </button>
+          )}
+
+          <div
+            ref={thumbScrollRef}
+            style={{ padding: "0.9rem clamp(1.5rem,5vw,4rem)", overflowX: "auto", scrollbarWidth: "none" }}
+          >
             <div style={{ display: "flex", gap: "0.9rem", width: "max-content", minWidth: "100%" }}>
               {allImages.length > 0
                 ? allImages.map((src, i) => (
