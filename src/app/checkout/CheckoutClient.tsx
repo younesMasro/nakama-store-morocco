@@ -26,21 +26,16 @@ interface AccItem {
 
 /* ─── constants ──────────────────────────────────────────────── */
 
-const KATANA: Record<string, { en: string; ar: string; ja: string }> = {
+const KATANA_NAMES: Record<string, { en: string; ar: string; ja: string }> = {
   "black-dragon": { en: "BLACK DRAGON", ar: "التنين الأسود", ja: "黒い龍" },
   "white-dragon": { en: "WHITE DRAGON", ar: "التنين الأبيض", ja: "白い龍" },
 };
 
-const INIT_BLACK_ACCS: AccItem[] = [
-  { databaseId: 0, slug: "black-wall-mount",           name: "Black Wall Mount",           price: 99, image: null },
-  { databaseId: 0, slug: "black-double-display-stand", name: "Black Double Display Stand", price: 99, image: null },
-  { databaseId: 0, slug: "black-display-stand",        name: "Black Display Stand",        price: 99, image: null },
-];
-
-const INIT_WHITE_ACCS: AccItem[] = [
-  { databaseId: 0, slug: "white-wall-mount",           name: "White Wall Mount",           price: 99, image: null },
-  { databaseId: 0, slug: "white-double-display-stand", name: "White Double Display Stand", price: 99, image: null },
-  { databaseId: 0, slug: "white-display-stand",        name: "White Display Stand",        price: 99, image: null },
+/* Flat accessory list — exact order the client specified */
+const INIT_ACCS: AccItem[] = [
+  { databaseId: 35, slug: "display-stand",        name: "Display Stand",        price: 99, image: null },
+  { databaseId: 37, slug: "double-display-stand",  name: "Double Display Stand", price: 99, image: null },
+  { databaseId: 38, slug: "wall-mount",            name: "Wall Mount",           price: 99, image: null },
 ];
 
 /* ─── helpers ────────────────────────────────────────────────── */
@@ -211,7 +206,6 @@ function AccessoryRow({ acc, qty, onChange, isBundleGift, isBlack, isLast }: {
   const [zoomed, setZoomed]       = useState(false);
   const showImg = !!acc.image && !imgFailed;
 
-  /* Escape to close + scroll-lock while open */
   useEffect(() => {
     if (!zoomed) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setZoomed(false); };
@@ -230,7 +224,6 @@ function AccessoryRow({ acc, qty, onChange, isBundleGift, isBlack, isLast }: {
         padding: "0.75rem 0",
         borderBottom: isLast ? "none" : "1px solid rgba(185,154,91,0.08)",
       }}>
-        {/* Thumbnail — clickable when image is available */}
         <div
           onClick={() => { if (showImg) setZoomed(true); }}
           title={showImg ? "Click to zoom" : undefined}
@@ -278,7 +271,6 @@ function AccessoryRow({ acc, qty, onChange, isBundleGift, isBlack, isLast }: {
         <MiniStepper value={qty} onChange={onChange} />
       </div>
 
-      {/* Zoom lightbox — rendered at document.body via portal */}
       {zoomed && showImg && createPortal(
         <div
           role="dialog"
@@ -301,7 +293,6 @@ function AccessoryRow({ acc, qty, onChange, isBundleGift, isBlack, isLast }: {
             onClick={(e) => e.stopPropagation()}
             style={{ position: "relative", cursor: "default" }}
           >
-            {/* Close button */}
             <button
               type="button"
               onClick={() => setZoomed(false)}
@@ -318,8 +309,6 @@ function AccessoryRow({ acc, qty, onChange, isBundleGift, isBlack, isLast }: {
             >
               ✕
             </button>
-
-            {/* Full-size image */}
             <img
               src={acc.image!}
               alt={acc.name}
@@ -333,8 +322,6 @@ function AccessoryRow({ acc, qty, onChange, isBundleGift, isBlack, isLast }: {
                 boxShadow: "0 32px 80px rgba(0,0,0,0.75), 0 0 0 1px rgba(185,154,91,0.06)",
               }}
             />
-
-            {/* Caption */}
             <p style={{
               textAlign: "center",
               color: "rgba(185,154,91,0.65)",
@@ -351,111 +338,67 @@ function AccessoryRow({ acc, qty, onChange, isBundleGift, isBlack, isLast }: {
   );
 }
 
-/* KatanaSection — one dragon card with its nested accessories */
-function KatanaSection({
-  dragonSlug, wcData, clientImage, qty, onQtyChange, unit,
-  accessories, accQtys, onAccQtyChange, isBlack, freeGiftSlug,
-  cardBg, cardBorder, divider,
+/* ── KatanaRow — dragon product row inside the flat list ── */
+function KatanaRow({
+  dragonSlug, imgSrc, qty, onQtyChange, unit, isLast,
 }: {
   dragonSlug: "black-dragon" | "white-dragon";
-  wcData: WCProduct | null;
-  clientImage: string | null;
+  imgSrc: string | null;
   qty: number;
   onQtyChange: (n: number) => void;
   unit: number;
-  accessories: AccItem[];
-  accQtys: Record<string, number>;
-  onAccQtyChange: (slug: string, qty: number) => void;
-  isBlack: boolean;
-  freeGiftSlug: string | null;
-  cardBg: string;
-  cardBorder: string;
-  divider: string;
+  isLast: boolean;
 }) {
-  const isDark = dragonSlug === "black-dragon";
-  const names  = KATANA[dragonSlug];
-  const imgSrc = wcData?.image?.sourceUrl ?? clientImage;
-
+  const names = KATANA_NAMES[dragonSlug];
   return (
     <div style={{
-      borderRadius: 16, border: `1px solid ${cardBorder}`,
-      backgroundColor: cardBg, overflow: "hidden",
+      display: "flex", alignItems: "center", gap: "0.75rem",
+      padding: "0.9rem 0",
+      borderBottom: isLast ? "none" : "1px solid rgba(185,154,91,0.10)",
     }}>
-      {/* ── Dragon header: thumbnail + name + stepper ── */}
-      <div style={{ padding: "1.25rem 1.5rem" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.9rem" }}>
-          {/* Thumbnail */}
-          <div style={{
-            width: 52, height: 52, borderRadius: 10, flexShrink: 0, overflow: "hidden",
-            background: isDark
-              ? "linear-gradient(135deg,#0d0d0d,#1a1206)"
-              : "linear-gradient(135deg,#f7f2e8,#efe6d7)",
-            border: `1px solid ${isDark ? "rgba(185,154,91,0.28)" : "rgba(185,154,91,0.35)"}`,
-            display: "flex", alignItems: "center", justifyContent: "center",
-          }}>
-            {imgSrc ? (
-              <img src={imgSrc} alt={names.en}
-                style={{ width: "100%", height: "100%", objectFit: "contain", padding: 4 }} />
-            ) : (
-              <span style={{ fontSize: "1.4rem", lineHeight: 1 }}>⚔️</span>
-            )}
-          </div>
-
-          {/* Name + price */}
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontSize: "0.44rem", letterSpacing: "0.24em", color: "var(--gold)", opacity: 0.6, marginBottom: 1 }}>
-              {names.ja}
-            </p>
-            <p className="font-heading" style={{ fontSize: "0.95rem", letterSpacing: "0.08em", color: "var(--text)", lineHeight: 1.1 }}>
-              {names.en}
-            </p>
-            <p style={{ fontSize: "0.58rem", color: "var(--text-muted)", opacity: 0.5, marginTop: 2 }}>
-              {fmt(unit)} DH / unit
-            </p>
-          </div>
-
-          {/* Qty + subtotal */}
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4, flexShrink: 0 }}>
-            <MiniStepper value={qty} onChange={onQtyChange} />
-            <AnimatePresence mode="wait">
-              {qty > 0 && (
-                <motion.p key={qty * unit}
-                  initial={{ opacity: 0, y: -3 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15 }}
-                  style={{ fontSize: "0.7rem", color: "var(--gold)", textAlign: "right", lineHeight: 1 }}
-                >
-                  {fmt(unit * qty)} DH
-                </motion.p>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
+      {/* Thumbnail */}
+      <div style={{
+        width: 52, height: 52, borderRadius: 10, flexShrink: 0, overflow: "hidden",
+        background: dragonSlug === "black-dragon"
+          ? "linear-gradient(135deg,#0d0d0d,#1a1206)"
+          : "linear-gradient(135deg,#f7f2e8,#efe6d7)",
+        border: `1px solid ${dragonSlug === "black-dragon" ? "rgba(185,154,91,0.28)" : "rgba(185,154,91,0.35)"}`,
+        display: "flex", alignItems: "center", justifyContent: "center",
+      }}>
+        {imgSrc ? (
+          <img src={imgSrc} alt={names.en} style={{ width: "100%", height: "100%", objectFit: "contain", padding: 4 }} />
+        ) : (
+          <span style={{ fontSize: "1.3rem", lineHeight: 1 }}>⚔️</span>
+        )}
       </div>
 
-      {/* ── Accessories ── */}
-      <div style={{ borderTop: `1px solid ${divider}`, padding: "1rem 1.5rem 1.4rem" }}>
-        <p style={{
-          fontSize: "0.44rem", letterSpacing: "0.3em", textTransform: "uppercase",
-          color: "var(--gold)", opacity: 0.62, marginBottom: "0.15rem",
-        }}>
-          COMPLETE YOUR {isDark ? "BLACK" : "WHITE"} DRAGON SETUP
+      {/* Name + price */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p style={{ fontSize: "0.44rem", letterSpacing: "0.22em", color: "var(--gold)", opacity: 0.6, marginBottom: 1 }}>
+          {names.ja}
         </p>
-        <p style={{ fontSize: "0.64rem", color: "var(--text-muted)", opacity: 0.5, lineHeight: 1.5, marginBottom: "0.8rem" }}>
-          Optional accessories. Quantity starts at 0.
+        <p className="font-heading" style={{ fontSize: "0.9rem", letterSpacing: "0.08em", color: "var(--text)", lineHeight: 1.1 }}>
+          {names.en}
         </p>
-        <div>
-          {accessories.map((acc, i) => (
-            <AccessoryRow
-              key={acc.slug}
-              acc={acc}
-              qty={accQtys[acc.slug] ?? 0}
-              onChange={(q) => onAccQtyChange(acc.slug, q)}
-              isBundleGift={freeGiftSlug === acc.slug}
-              isBlack={isBlack}
-              isLast={i === accessories.length - 1}
-            />
-          ))}
-        </div>
+        <p style={{ fontSize: "0.58rem", color: "var(--text-muted)", opacity: 0.5, marginTop: 2 }}>
+          {fmt(unit)} DH / unit
+        </p>
+      </div>
+
+      {/* Stepper + subtotal */}
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4, flexShrink: 0 }}>
+        <MiniStepper value={qty} onChange={onQtyChange} />
+        <AnimatePresence mode="wait">
+          {qty > 0 && (
+            <motion.p key={qty * unit}
+              initial={{ opacity: 0, y: -3 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              style={{ fontSize: "0.7rem", color: "var(--gold)", textAlign: "right", lineHeight: 1 }}
+            >
+              {fmt(unit * qty)} DH
+            </motion.p>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
@@ -476,28 +419,24 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
   const { clearCart } = useCart();
   const isBlack    = theme === "black-dragon";
 
-  /* ── Katana quantities ── */
+  /* ── Katana quantities — URL param sets initial qty, other starts at 0 ── */
   const [blackQty, setBlackQty] = useState(initialSlug === "black-dragon" ? initialQty : 0);
   const [whiteQty, setWhiteQty] = useState(initialSlug === "white-dragon" ? initialQty : 0);
 
-  /* ── Accessory data (populated by client-side fetch) ── */
-  const [blackAccs, setBlackAccs] = useState<AccItem[]>(INIT_BLACK_ACCS);
-  const [whiteAccs, setWhiteAccs] = useState<AccItem[]>(INIT_WHITE_ACCS);
+  /* ── Accessory data ── */
+  const [accs, setAccs] = useState<AccItem[]>(INIT_ACCS);
 
-  /* ── Accessory quantities — all start at 0 ── */
+  /* ── Accessory quantities — always start at 0 ── */
   const [accQtys, setAccQtys] = useState<Record<string, number>>({
-    "black-wall-mount":           0,
-    "black-double-display-stand": 0,
-    "black-display-stand":        0,
-    "white-wall-mount":           0,
-    "white-double-display-stand": 0,
-    "white-display-stand":        0,
+    "display-stand":       0,
+    "double-display-stand": 0,
+    "wall-mount":          0,
   });
   const setAccQty = useCallback((slug: string, qty: number) => {
     setAccQtys((prev) => ({ ...prev, [slug]: Math.max(0, Math.min(20, qty)) }));
   }, []);
 
-  /* ── Dragon images (client-side, bypasses Hostinger loopback block) ── */
+  /* ── Dragon images (client-side — Hostinger loopback block) ── */
   const [clientBlackImg, setClientBlackImg] = useState<string | null>(null);
   const [clientWhiteImg, setClientWhiteImg] = useState<string | null>(null);
 
@@ -513,74 +452,20 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
       price?: string;
     };
 
-    function resolveAcc(
-      direct: WPNode | null | undefined,
-      catNodes: WPNode[],
-      targetSlug: string,
-      fallback: AccItem,
-      excludeKeyword?: string,
-    ): AccItem {
-      const match =
-        direct ??
-        catNodes.find((n) => {
-          if (n.slug === targetSlug) return true;
-          const nm = (n.name ?? "").toLowerCase();
-
-          // Primary: all slug parts must be in the product name
-          const allParts = targetSlug.split("-");
-          if (
-            allParts.every((p) => nm.includes(p)) &&
-            !(excludeKeyword && nm.includes(excludeKeyword))
-          ) return true;
-
-          // Secondary: strip color prefix and match generic name,
-          // excluding the opposite colour so black/white don't cross
-          if (targetSlug.startsWith("black-") || targetSlug.startsWith("white-")) {
-            const opposite = targetSlug.startsWith("black-") ? "white" : "black";
-            const genericSlug = targetSlug.replace(/^(?:black|white)-/, "");
-            const genericParts = genericSlug.split("-");
-            return (
-              genericParts.every((p) => nm.includes(p)) &&
-              !nm.includes(opposite) &&
-              !(excludeKeyword && nm.includes(excludeKeyword))
-            );
-          }
-          return false;
-        });
-      if (!match) return fallback;
-      return {
-        databaseId: match.databaseId || fallback.databaseId,
-        slug:       targetSlug,
-        // Always show the intended colour name (e.g. "Black Wall Mount"),
-        // even when resolved from a generic WooCommerce product ("Wall Mount")
-        name:       fallback.name,
-        // Fix: parseFloat preserves the decimal, Math.round removes .00
-        // parseInt("99.00".replace(/[^0-9]/g,"")) was returning 9900
-        price:      Math.round(parseFloat((match.price ?? "99").replace(/[^\d.]/g, "")) || 99),
-        image:      match.image?.sourceUrl ?? fallback.image,
-      };
-    }
-
     fetch("https://admin.nakamastore.ma/graphql", {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
       signal:  controller.signal,
       body: JSON.stringify({
         query: `{
-          cat: products(first:30, where:{category:"accessories"}) {
+          ds:   product(id:"display-stand",        idType:SLUG){ databaseId name image{sourceUrl} ...on SimpleProduct{price} }
+          dds:  product(id:"double-display-stand",  idType:SLUG){ databaseId name image{sourceUrl} ...on SimpleProduct{price} }
+          wm:   product(id:"wall-mount",            idType:SLUG){ databaseId name image{sourceUrl} ...on SimpleProduct{price} }
+          cat:  products(first:30, where:{category:"accessories"}) {
             nodes { databaseId slug name image{sourceUrl} ...on SimpleProduct{price} }
           }
-          bwm:  product(id:"black-wall-mount",           idType:SLUG){ databaseId name image{sourceUrl} ...on SimpleProduct{price} }
-          bdds: product(id:"black-double-display-stand",  idType:SLUG){ databaseId name image{sourceUrl} ...on SimpleProduct{price} }
-          bds:  product(id:"black-display-stand",         idType:SLUG){ databaseId name image{sourceUrl} ...on SimpleProduct{price} }
-          wwm:  product(id:"white-wall-mount",            idType:SLUG){ databaseId name image{sourceUrl} ...on SimpleProduct{price} }
-          wdds: product(id:"white-double-display-stand",  idType:SLUG){ databaseId name image{sourceUrl} ...on SimpleProduct{price} }
-          wds:  product(id:"white-display-stand",         idType:SLUG){ databaseId name image{sourceUrl} ...on SimpleProduct{price} }
-          gwm:  product(id:"wall-mount",                  idType:SLUG){ databaseId name image{sourceUrl} ...on SimpleProduct{price} }
-          gdds: product(id:"double-display-stand",        idType:SLUG){ databaseId name image{sourceUrl} ...on SimpleProduct{price} }
-          gds:  product(id:"display-stand",               idType:SLUG){ databaseId name image{sourceUrl} ...on SimpleProduct{price} }
-          bd:   product(id:"black-dragon",                idType:SLUG){ image{sourceUrl} }
-          wd:   product(id:"white-dragon",                idType:SLUG){ image{sourceUrl} }
+          bd:   product(id:"black-dragon",  idType:SLUG){ image{sourceUrl} }
+          wd:   product(id:"white-dragon",  idType:SLUG){ image{sourceUrl} }
         }`,
       }),
     })
@@ -593,17 +478,22 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
         setClientBlackImg(dt.bd?.image?.sourceUrl ?? null);
         setClientWhiteImg(dt.wd?.image?.sourceUrl ?? null);
 
-        // dt.bwm = black-specific product (if it exists in WooCommerce)
-        // dt.gwm = generic "wall-mount" product (fallback when black-* slug not found)
-        setBlackAccs([
-          resolveAcc(dt.bwm  ?? dt.gwm,  catNodes, "black-wall-mount",           INIT_BLACK_ACCS[0]),
-          resolveAcc(dt.bdds ?? dt.gdds,  catNodes, "black-double-display-stand", INIT_BLACK_ACCS[1]),
-          resolveAcc(dt.bds  ?? dt.gds,   catNodes, "black-display-stand",        INIT_BLACK_ACCS[2], "double"),
-        ]);
-        setWhiteAccs([
-          resolveAcc(dt.wwm,  catNodes, "white-wall-mount",           INIT_WHITE_ACCS[0]),
-          resolveAcc(dt.wdds, catNodes, "white-double-display-stand", INIT_WHITE_ACCS[1]),
-          resolveAcc(dt.wds,  catNodes, "white-display-stand",        INIT_WHITE_ACCS[2], "double"),
+        function resolveAcc(direct: WPNode | null | undefined, fallback: AccItem): AccItem {
+          const match = direct ?? catNodes.find((n) => n.slug === fallback.slug);
+          if (!match) return fallback;
+          return {
+            databaseId: match.databaseId || fallback.databaseId,
+            slug:       fallback.slug,
+            name:       fallback.name,
+            price:      Math.round(parseFloat((match.price ?? "99").replace(/[^\d.]/g, "")) || 99),
+            image:      match.image?.sourceUrl ?? fallback.image,
+          };
+        }
+
+        setAccs([
+          resolveAcc(dt.ds,  INIT_ACCS[0]),
+          resolveAcc(dt.dds, INIT_ACCS[1]),
+          resolveAcc(dt.wm,  INIT_ACCS[2]),
         ]);
       })
       .catch(() => clearTimeout(timer));
@@ -615,29 +505,18 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
   const blackUnit = parsePrice(wcBlack?.price);
   const whiteUnit = parsePrice(wcWhite?.price);
 
-  /* ── Bundle & free gift ── */
+  /* ── Bundle & free gift: Black + White → Double Display Stand free ── */
   const hasBundle = blackQty >= 1 && whiteQty >= 1;
-
-  const freeGiftSlug = useMemo<string | null>(() => {
-    if (!hasBundle) return null;
-    // Prefer black-double-display-stand; fall back to white
-    return (
-      blackAccs.find((a) => a.slug === "black-double-display-stand")?.slug ??
-      whiteAccs.find((a) => a.slug === "white-double-display-stand")?.slug ??
-      null
-    );
-  }, [hasBundle, blackAccs, whiteAccs]);
-
-  const freeGiftAcc = useMemo<AccItem | null>(() => {
-    if (!freeGiftSlug) return null;
-    return [...blackAccs, ...whiteAccs].find((a) => a.slug === freeGiftSlug) ?? null;
-  }, [freeGiftSlug, blackAccs, whiteAccs]);
+  const freeGiftAcc = useMemo<AccItem | null>(
+    () => (hasBundle ? (accs.find((a) => a.slug === "double-display-stand") ?? null) : null),
+    [hasBundle, accs],
+  );
 
   /* ── Totals ── */
   const katanaTotal = blackQty * blackUnit + whiteQty * whiteUnit;
-  const accTotal = useMemo(() =>
-    [...blackAccs, ...whiteAccs].reduce((sum, a) => sum + a.price * (accQtys[a.slug] ?? 0), 0),
-    [blackAccs, whiteAccs, accQtys],
+  const accTotal = useMemo(
+    () => accs.reduce((sum, a) => sum + a.price * (accQtys[a.slug] ?? 0), 0),
+    [accs, accQtys],
   );
   const grandTotal = katanaTotal + accTotal;
 
@@ -650,7 +529,6 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
   const [loading,  setLoading]  = useState(false);
   const [apiErr,   setApiErr]   = useState("");
 
-  /* ── Validation ── */
   function validate() {
     const e: Record<string, string> = {};
     if (fullName.trim().length < 2) e.fullName = "Required.";
@@ -662,14 +540,12 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
     return !Object.keys(e).length;
   }
 
-  /* ── Submit ── */
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!validate()) return;
     setLoading(true); setApiErr("");
 
-    const allAccs = [...blackAccs, ...whiteAccs];
-    const accessoriesPayload = allAccs
+    const accessoriesPayload = accs
       .filter((a) => (accQtys[a.slug] ?? 0) > 0)
       .map((a) => ({ slug: a.slug, databaseId: a.databaseId, quantity: accQtys[a.slug] }));
 
@@ -692,12 +568,12 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
         sessionStorage.setItem("nakama-last-order", JSON.stringify({
           orderId: data.orderId, name: fullName,
           blackQty, whiteQty, blackUnit, whiteUnit,
-          accessories: allAccs
+          accessories: accs
             .filter((a) => (accQtys[a.slug] ?? 0) > 0)
             .map((a) => ({ name: a.name, quantity: accQtys[a.slug], price: a.price })),
           hasBundle, grandTotal,
         }));
-      } catch { /* sessionStorage may be unavailable */ }
+      } catch { /* sessionStorage unavailable */ }
 
       clearCart();
       router.push(`/thank-you?orderId=${data.orderId}&name=${encodeURIComponent(fullName)}`);
@@ -764,51 +640,57 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
                 </div>
               </div>
 
-              {/* Choose Your Katana */}
+              {/* Flat product list */}
               <div style={{
                 borderRadius: 18, border: `1px solid ${cardBorder}`,
                 backgroundColor: cardBg, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
                 padding: "1.5rem 1.75rem",
               }}>
-                <SectionLabel>CHOOSE YOUR KATANA</SectionLabel>
+                <SectionLabel>YOUR ORDER</SectionLabel>
                 <p style={{ fontSize: "0.68rem", color: "var(--text-muted)", opacity: 0.6, lineHeight: 1.6, marginTop: -8, marginBottom: "1.25rem" }}>
-                  Adjust the quantity for each model. Accessories are optional and start at 0 — add only what you need.
+                  Adjust quantities as needed. Accessories start at 0.
                 </p>
 
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
-                  <KatanaSection
+                <div style={{
+                  borderRadius: 14, border: `1px solid ${cardBorder}`,
+                  backgroundColor: innerCard, padding: "0.25rem 1.25rem",
+                }}>
+                  {/* Katana rows */}
+                  <KatanaRow
                     dragonSlug="black-dragon"
-                    wcData={wcBlack}
-                    clientImage={clientBlackImg}
+                    imgSrc={wcBlack?.image?.sourceUrl ?? clientBlackImg}
                     qty={blackQty}
                     onQtyChange={setBlackQty}
                     unit={blackUnit}
-                    accessories={blackAccs}
-                    accQtys={accQtys}
-                    onAccQtyChange={setAccQty}
-                    isBlack={isBlack}
-                    freeGiftSlug={freeGiftSlug}
-                    cardBg={innerCard}
-                    cardBorder={cardBorder}
-                    divider={divider}
+                    isLast={false}
                   />
-
-                  <KatanaSection
+                  <KatanaRow
                     dragonSlug="white-dragon"
-                    wcData={wcWhite}
-                    clientImage={clientWhiteImg}
+                    imgSrc={wcWhite?.image?.sourceUrl ?? clientWhiteImg}
                     qty={whiteQty}
                     onQtyChange={setWhiteQty}
                     unit={whiteUnit}
-                    accessories={whiteAccs}
-                    accQtys={accQtys}
-                    onAccQtyChange={setAccQty}
-                    isBlack={isBlack}
-                    freeGiftSlug={freeGiftSlug}
-                    cardBg={innerCard}
-                    cardBorder={cardBorder}
-                    divider={divider}
+                    isLast={false}
                   />
+
+                  {/* Divider + accessories label */}
+                  <div style={{ height: 1, backgroundColor: "rgba(185,154,91,0.14)", margin: "0.2rem 0" }} />
+                  <p style={{ fontSize: "0.44rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "var(--gold)", opacity: 0.55, padding: "0.6rem 0 0.1rem" }}>
+                    ACCESSORIES — OPTIONAL
+                  </p>
+
+                  {/* Accessory rows */}
+                  {accs.map((acc, i) => (
+                    <AccessoryRow
+                      key={acc.slug}
+                      acc={acc}
+                      qty={accQtys[acc.slug] ?? 0}
+                      onChange={(q) => setAccQty(acc.slug, q)}
+                      isBundleGift={freeGiftAcc?.slug === acc.slug}
+                      isBlack={isBlack}
+                      isLast={i === accs.length - 1}
+                    />
+                  ))}
                 </div>
 
                 {/* Bundle banner */}
@@ -935,7 +817,7 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
                     <SummaryRow label={`White Dragon × ${whiteQty}`} value={`${fmt(whiteUnit * whiteQty)} DH`} />
                   )}
 
-                  {[...blackAccs, ...whiteAccs].map((a) => {
+                  {accs.map((a) => {
                     const q = accQtys[a.slug] ?? 0;
                     if (q === 0) return null;
                     return (
@@ -965,8 +847,8 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
                     )}
                   </AnimatePresence>
 
-                  <SummaryRow label="Delivery"      value="FREE"        valueStyle={{ color: "var(--gold)", fontWeight: 600 }} />
-                  <SummaryRow label="Delivery time" value="24H – 48H"   valueStyle={{ color: "var(--text-muted)", opacity: 0.7 }} />
+                  <SummaryRow label="Delivery"      value="FREE"         valueStyle={{ color: "var(--gold)", fontWeight: 600 }} />
+                  <SummaryRow label="Delivery time" value="24H – 48H"    valueStyle={{ color: "var(--text-muted)", opacity: 0.7 }} />
                   <SummaryRow label="Payment"       value="Cash on delivery" valueStyle={{ color: "var(--text-muted)", opacity: 0.7 }} />
                 </div>
 

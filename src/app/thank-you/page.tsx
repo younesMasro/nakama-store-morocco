@@ -7,6 +7,7 @@ import Link from "next/link";
 import { CheckCircle2, MessageCircle, LayoutGrid, Phone, Gift } from "lucide-react";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { site } from "@/data/site";
+import InstagramPopup from "@/components/ui/InstagramPopup";
 
 function fmtAmt(n: number): string { return n.toLocaleString("en-US"); }
 
@@ -192,6 +193,7 @@ export default function ThankYouPage() {
       </div>
     }>
       <ThankYouContent />
+      <InstagramPopup delayMs={2000} />
     </Suspense>
   );
 }

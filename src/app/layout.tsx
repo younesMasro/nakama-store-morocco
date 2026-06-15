@@ -5,7 +5,6 @@ import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { CartProvider } from "@/components/providers/CartProvider";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import InstagramPopup from "@/components/ui/InstagramPopup";
 
 const cinzel = Cinzel({
   subsets: ["latin"],
@@ -70,7 +69,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Navbar />
             <main>{children}</main>
             <Footer />
-            <InstagramPopup />
           </CartProvider>
         </ThemeProvider>
       </body>

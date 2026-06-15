@@ -5,14 +5,13 @@ import { motion, type Variants } from "framer-motion";
 import Link from "next/link";
 import {
   Eye, EyeOff, Plus, Minus, Share2,
-  MessageCircle, ArrowLeft,
+  ArrowLeft,
   Phone, LayoutGrid, Info, Star,
   Shield, Ruler, Package, Truck, ShoppingCart, Check,
 } from "lucide-react";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { useCart } from "@/components/providers/CartProvider";
 import { PageShell } from "@/components/shared/PageShell";
-import { site } from "@/data/site";
 import type { WCProduct } from "@/lib/woocommerce";
 import { stripHtml, formatPrice } from "@/lib/woocommerce";
 
@@ -175,9 +174,6 @@ export default function ProductPageClient({ slug, wcProduct }: Props) {
     ? "linear-gradient(90deg,rgba(0,0,0,.72) 0%,rgba(0,0,0,.28) 42%,rgba(0,0,0,.18) 100%)"
     : "linear-gradient(90deg,rgba(248,243,235,.72) 0%,rgba(248,243,235,.36) 38%,rgba(248,243,235,.06) 100%)";
 
-  const waMsg  = encodeURIComponent(`🗡️ *Order — Nakama Store Morocco*\n\n*Model:* ${productName}\n\nأريد طلب هذا المنتج.`);
-  const waHref = `https://wa.me/${site.whatsapp.replace(/\D/g, "")}?text=${waMsg}`;
-
   const FocusIcon = isFocusMode ? EyeOff : Eye;
   const ctrlBtns = [
     { Icon: FocusIcon, label: "Focus",    handler: toggleFocus, active: isFocusMode },
@@ -271,34 +267,6 @@ export default function ProductPageClient({ slug, wcProduct }: Props) {
                   style={{ color: "var(--text-muted)", textShadow }}>
                   {description}
                 </motion.p>
-                <motion.div variants={fadeUp} style={{ marginTop: "0.75rem", display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-                  <Link
-                    href={`/checkout?product=${slug}`}
-                    style={{
-                      display: "inline-flex", alignItems: "center", gap: 5,
-                      padding: "7px 14px", borderRadius: 6,
-                      border: "1px solid rgba(185,154,91,0.50)",
-                      color: "var(--gold)", fontSize: "0.54rem", letterSpacing: "0.2em", textTransform: "uppercase",
-                      backgroundColor: "rgba(185,154,91,0.08)", backdropFilter: "blur(4px)",
-                    }}
-                  >
-                    ORDER NOW
-                  </Link>
-                  <button
-                    onClick={handleAddToCart}
-                    style={{
-                      display: "inline-flex", alignItems: "center", gap: 5,
-                      padding: "7px 12px", borderRadius: 6,
-                      border: `1px solid ${cartAdded ? "rgba(34,197,94,0.6)" : "rgba(185,154,91,0.35)"}`,
-                      color: cartAdded ? "#22c55e" : "var(--text-muted)", fontSize: "0.54rem", letterSpacing: "0.2em", textTransform: "uppercase",
-                      backgroundColor: cartAdded ? "rgba(34,197,94,0.08)" : "transparent",
-                      cursor: "pointer", transition: "all .25s",
-                    }}
-                  >
-                    {cartAdded ? <Check size={11} strokeWidth={2} /> : <ShoppingCart size={11} strokeWidth={1.5} />}
-                    {cartAdded ? "ADDED ✓" : "ADD TO CART"}
-                  </button>
-                </motion.div>
               </motion.div>
 
               {/* Image — absolute centered, pointer-events-none so controls receive touches */}
@@ -405,36 +373,6 @@ export default function ProductPageClient({ slug, wcProduct }: Props) {
                   style={{ color: "var(--text-muted)", textShadow }}>
                   {description}
                 </motion.p>
-                <motion.div variants={fadeUp} style={{ display: "flex", gap: "0.65rem", flexWrap: "wrap" }}>
-                  <Link
-                    href={`/checkout?product=${slug}`}
-                    className="inline-flex items-center gap-2 transition-all duration-300"
-                    style={{
-                      height: 44, padding: "0 24px", borderRadius: 8,
-                      border: "1px solid rgba(185,154,91,0.50)",
-                      color: "var(--gold)", fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase",
-                      backgroundColor: "rgba(185,154,91,0.08)", backdropFilter: "blur(6px)",
-                    }}
-                    onMouseEnter={(e) => { const el = e.currentTarget as HTMLElement; el.style.backgroundColor = "rgba(185,154,91,0.20)"; el.style.borderColor = "rgba(185,154,91,0.80)"; }}
-                    onMouseLeave={(e) => { const el = e.currentTarget as HTMLElement; el.style.backgroundColor = "rgba(185,154,91,0.08)"; el.style.borderColor = "rgba(185,154,91,0.50)"; }}
-                  >
-                    ORDER NOW
-                  </Link>
-                  <button
-                    onClick={handleAddToCart}
-                    className="inline-flex items-center gap-2 transition-all duration-300"
-                    style={{
-                      height: 44, padding: "0 18px", borderRadius: 8,
-                      border: `1px solid ${cartAdded ? "rgba(34,197,94,0.6)" : "rgba(185,154,91,0.35)"}`,
-                      color: cartAdded ? "#22c55e" : "var(--text-muted)", fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase",
-                      backgroundColor: cartAdded ? "rgba(34,197,94,0.08)" : "transparent",
-                      cursor: "pointer", transition: "all .25s",
-                    }}
-                  >
-                    {cartAdded ? <Check size={13} strokeWidth={2} /> : <ShoppingCart size={13} strokeWidth={1.5} />}
-                    {cartAdded ? "ADDED ✓" : "ADD TO CART"}
-                  </button>
-                </motion.div>
                 <motion.p variants={fadeUp} className="text-[.58rem] tracking-[.14em] uppercase"
                   style={{ color: "var(--text-muted)", opacity: .5 }}>
                   MADE OF WOOD · FOR DECORATION ONLY
@@ -509,7 +447,7 @@ export default function ProductPageClient({ slug, wcProduct }: Props) {
                   </div>
                 </div>
 
-                {/* Order block — fades in focus mode */}
+                {/* Price block — fades in focus mode */}
                 <div style={{
                   opacity: isFocusMode ? 0 : 1,
                   pointerEvents: isFocusMode ? "none" : "auto",
@@ -535,32 +473,6 @@ export default function ProductPageClient({ slug, wcProduct }: Props) {
                         <span style={{ color: "var(--text-muted)", fontSize: "0.7rem", lineHeight: 1.4 }}>{s}</span>
                       </div>
                     ))}
-                  </div>
-
-                  <div style={{ display: "flex", gap: "0.65rem" }}>
-                    <Link
-                      href={`/checkout?product=${slug}`}
-                      className="flex items-center justify-center gap-2 transition-all duration-300"
-                      style={{ flex: 1, height: 44, borderRadius: 8, backgroundColor: "var(--gold)", color: "var(--bg)", fontSize: "0.58rem", letterSpacing: "0.18em", textTransform: "uppercase", fontWeight: 600 }}
-                      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.filter = "brightness(1.12)"; }}
-                      onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.filter = ""; }}
-                    >
-                      ORDER NOW
-                    </Link>
-                    <button
-                      onClick={handleAddToCart}
-                      className="inline-flex items-center justify-center gap-2 transition-all duration-300"
-                      style={{
-                        height: 44, padding: "0 16px", borderRadius: 8,
-                        border: `1px solid ${cartAdded ? "rgba(34,197,94,0.6)" : "rgba(185,154,91,0.45)"}`,
-                        color: cartAdded ? "#22c55e" : "var(--gold)", fontSize: "0.58rem", letterSpacing: "0.14em", textTransform: "uppercase",
-                        backgroundColor: cartAdded ? "rgba(34,197,94,0.08)" : "rgba(185,154,91,0.06)",
-                        cursor: "pointer", transition: "all .25s", whiteSpace: "nowrap",
-                      }}
-                    >
-                      {cartAdded ? <Check size={13} strokeWidth={2} /> : <ShoppingCart size={13} strokeWidth={1.5} />}
-                      {cartAdded ? "ADDED ✓" : "ADD TO CART"}
-                    </button>
                   </div>
                 </div>
               </motion.div>
@@ -660,17 +572,60 @@ export default function ProductPageClient({ slug, wcProduct }: Props) {
           </p>
         </section>
 
-        {/* WhatsApp CTA — mobile only */}
-        <section className="md:hidden" style={{ backgroundColor: "var(--bg)", padding: "1.25rem 1.5rem 5rem" }}>
-          <a
-            href={waHref}
-            target="_blank" rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2"
-            style={{ height: 52, borderRadius: 10, backgroundColor: "var(--gold)", color: "var(--bg)", fontSize: "0.7rem", letterSpacing: "0.14em", textTransform: "uppercase", fontWeight: 600 }}
-          >
-            <MessageCircle size={16} />
-            ORDER ON WHATSAPP
-          </a>
+        {/* ══════════════════════════════════════════════
+            ACTION BUTTONS — below thumbnails, all screen sizes
+        ══════════════════════════════════════════════ */}
+        <section style={{
+          backgroundColor: "var(--bg)",
+          padding: "1.5rem clamp(1.5rem,5vw,4rem) clamp(2rem,4vw,3rem)",
+          borderBottom: "1px solid rgba(185,154,91,0.10)",
+        }}>
+          <div style={{ maxWidth: 900, margin: "0 auto", display: "flex", flexWrap: "wrap", gap: "0.75rem", alignItems: "center", justifyContent: "center" }}>
+            <Link
+              href={`/checkout?product=${slug}`}
+              className="flex items-center justify-center gap-2 transition-all duration-300"
+              style={{
+                height: 50, padding: "0 28px", borderRadius: 10,
+                backgroundColor: "var(--gold)", color: "var(--bg)",
+                fontSize: "0.64rem", letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 700,
+                flexShrink: 0,
+              }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.filter = "brightness(1.1)"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.filter = ""; }}
+            >
+              ORDER NOW
+            </Link>
+            <button
+              onClick={handleAddToCart}
+              className="flex items-center justify-center gap-2 transition-all duration-300"
+              style={{
+                height: 50, padding: "0 22px", borderRadius: 10,
+                border: `1px solid ${cartAdded ? "rgba(34,197,94,0.6)" : "rgba(185,154,91,0.45)"}`,
+                color: cartAdded ? "#22c55e" : "var(--gold)",
+                fontSize: "0.64rem", letterSpacing: "0.18em", textTransform: "uppercase",
+                backgroundColor: cartAdded ? "rgba(34,197,94,0.08)" : "rgba(185,154,91,0.06)",
+                cursor: "pointer", transition: "all .25s", flexShrink: 0,
+              }}
+            >
+              {cartAdded ? <Check size={14} strokeWidth={2} /> : <ShoppingCart size={14} strokeWidth={1.5} />}
+              {cartAdded ? "ADDED ✓" : "ADD TO CART"}
+            </button>
+            <Link
+              href="/catalogue"
+              className="flex items-center justify-center gap-2 transition-all duration-300"
+              style={{
+                height: 50, padding: "0 22px", borderRadius: 10,
+                border: "1px solid rgba(185,154,91,0.35)", color: "var(--text-muted)",
+                fontSize: "0.64rem", letterSpacing: "0.18em", textTransform: "uppercase",
+                flexShrink: 0,
+              }}
+              onMouseEnter={(e) => { const el = e.currentTarget as HTMLElement; el.style.borderColor = "rgba(185,154,91,0.65)"; el.style.color = "var(--gold)"; }}
+              onMouseLeave={(e) => { const el = e.currentTarget as HTMLElement; el.style.borderColor = "rgba(185,154,91,0.35)"; el.style.color = "var(--text-muted)"; }}
+            >
+              <LayoutGrid size={14} strokeWidth={1.5} />
+              CATALOGUE
+            </Link>
+          </div>
         </section>
 
         {/* Fixed mobile bottom nav */}

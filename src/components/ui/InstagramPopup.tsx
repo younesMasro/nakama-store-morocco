@@ -7,18 +7,17 @@ import { useTheme } from "@/components/providers/ThemeProvider";
 import { site } from "@/data/site";
 
 const SESSION_KEY = "nakama-ig-popup-dismissed";
-const DELAY_MS    = 4000;
 
-export default function InstagramPopup() {
+export default function InstagramPopup({ delayMs = 2000 }: { delayMs?: number }) {
   const { theme } = useTheme();
   const isBlack   = theme === "black-dragon";
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     if (sessionStorage.getItem(SESSION_KEY)) return;
-    const t = setTimeout(() => setVisible(true), DELAY_MS);
+    const t = setTimeout(() => setVisible(true), delayMs);
     return () => clearTimeout(t);
-  }, []);
+  }, [delayMs]);
 
   function dismiss() {
     sessionStorage.setItem(SESSION_KEY, "1");
