@@ -171,9 +171,14 @@ export default function ProductPageClient({ slug, wcProduct }: Props) {
     ...(wcProduct?.image?.sourceUrl ? [wcProduct.image.sourceUrl] : []),
     ...(wcProduct?.galleryImages?.nodes?.map((n) => n.sourceUrl) ?? []),
   ];
-  const allImages   = Array.from(new Set(rawUrls));
-  const mobileActiveImage  = activeThumb >= 0 ? (allImages[activeThumb] ?? null) : null;
-  const desktopActiveImage = allImages[Math.max(0, activeThumb)] ?? null;
+  const allImages = Array.from(new Set(rawUrls));
+
+  /* reorder images to match THUMB_LABELS: FULL VIEW(0), KASHIRA(1), HANDLE(2), ENGRAVING(4→3), TSUBA(3→4) */
+  const IMAGE_ORDER = [0, 1, 2, 4, 3];
+  const displayImages = IMAGE_ORDER.map((i) => allImages[i]).filter((u): u is string => Boolean(u));
+
+  const mobileActiveImage  = activeThumb >= 0 ? (displayImages[activeThumb] ?? null) : null;
+  const desktopActiveImage = displayImages[Math.max(0, activeThumb)] ?? null;
   const activeImage = mobileActiveImage; // kept for any shared references
 
   useEffect(() => {
@@ -190,7 +195,7 @@ export default function ProductPageClient({ slug, wcProduct }: Props) {
       el.removeEventListener("scroll", checkThumbScroll);
       window.removeEventListener("resize", checkThumbScroll);
     };
-  }, [allImages, checkThumbScroll]);
+  }, [displayImages, checkThumbScroll]);
 
   const productName = wcProduct?.name ?? st.title.replace("\n", " ");
   const description = wcProduct?.shortDescription
@@ -559,8 +564,8 @@ export default function ProductPageClient({ slug, wcProduct }: Props) {
             style={{ padding: "0.9rem clamp(1.5rem,5vw,4rem)", overflowX: "auto", scrollbarWidth: "none" }}
           >
             <div style={{ display: "flex", gap: "0.9rem", width: "max-content", minWidth: "100%" }}>
-              {allImages.length > 0
-                ? allImages.map((src, i) => (
+              {displayImages.length > 0
+                ? displayImages.map((src, i) => (
                     <button
                       key={`${src}-${i}`}
                       onClick={() => handleThumbnailClick(i)}
