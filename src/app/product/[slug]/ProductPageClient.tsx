@@ -233,15 +233,15 @@ export default function ProductPageClient({ slug, wcProduct }: Props) {
         ══════════════════════════════════════════════ */}
         <section className="relative overflow-hidden" style={{ minHeight: "100svh" }}>
 
-          {/* Responsive background — 1x + 2x (4K) srcset */}
+          {/* Responsive background */}
           <div aria-hidden className="absolute inset-0 pointer-events-none" style={{ zIndex: 0 }}>
             <picture style={{ display: "block", position: "absolute", inset: 0 }}>
               <source
                 media="(min-width:768px)"
-                srcSet={`/images/hero/hero-${st.bgKey}-desktop.png 1x, /images/hero/hero-${st.bgKey}-desktop@2x.png 2x`}
+                srcSet={`/images/hero/hero-${st.bgKey}-desktop.png`}
               />
               <source
-                srcSet={`/images/hero/hero-${st.bgKey}-mobile.png 1x, /images/hero/hero-${st.bgKey}-mobile@2x.png 2x`}
+                srcSet={`/images/hero/hero-${st.bgKey}-mobile.png`}
               />
               <img
                 src={`/images/hero/hero-${st.bgKey}-mobile.png`}
