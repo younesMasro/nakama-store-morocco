@@ -629,7 +629,7 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
                   <SectionLabel>CONTACT INFORMATION</SectionLabel>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}
                     className="sm:grid-cols-2 grid-cols-1">
-                    <FormField label="Full Name"    Icon={User}  value={fullName} onChange={setFullName} error={errors.fullName} placeholder="Younes"            autoComplete="name" />
+                    <FormField label="Full Name"    Icon={User}  value={fullName} onChange={setFullName} error={errors.fullName} placeholder="Enter your full name"            autoComplete="name" />
                     <FormField label="Phone Number" Icon={Phone} value={phone}    onChange={setPhone}    error={errors.phone}    placeholder="+212 6XX XXX XXX" autoComplete="tel" type="tel" />
                   </div>
                 </div>
@@ -640,7 +640,7 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
                   <SectionLabel>DELIVERY INFORMATION</SectionLabel>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}
                     className="sm:grid-cols-2 grid-cols-1">
-                    <FormField label="City"             Icon={Building2} value={city}    onChange={setCity}    error={errors.city}    placeholder="Casablanca"               autoComplete="address-level2" />
+                    <FormField label="City"             Icon={Building2} value={city}    onChange={setCity}    error={errors.city}    placeholder="Enter your city"               autoComplete="address-level2" />
                     <FormField label="Delivery Address" Icon={MapPin}    value={address} onChange={setAddress} error={errors.address} placeholder="123 Rue Example, Appt 4" autoComplete="street-address" />
                   </div>
                 </div>
