@@ -63,7 +63,7 @@ const SPECS = [
 /* ─── PlatformRings ────────────────────────────────────── */
 function PlatformRings() {
   return (
-    <div aria-hidden style={{ position: "relative", width: "clamp(180px,36vw,300px)", height: "clamp(50px,7vw,82px)" }}>
+    <div aria-hidden style={{ position: "relative", width: "clamp(180px,36vw,300px)", height: "clamp(50px,7vw,82px)", display: "none" }}>
       {[0, 1, 2].map((i) => (
         <div key={i} style={{
           position: "absolute",

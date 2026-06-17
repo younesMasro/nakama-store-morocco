@@ -70,6 +70,7 @@ function PlatformRings({ isBlack }: { isBlack: boolean }) {
         position: "relative",
         width: "clamp(180px,40vw,320px)",
         height: "clamp(54px,8vw,88px)",
+        display: "none",
       }}
     >
       {[0, 1, 2].map((i) => (
