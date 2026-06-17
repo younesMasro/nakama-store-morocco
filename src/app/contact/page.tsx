@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { MessageCircle, ExternalLink, ChevronRight, Send } from "lucide-react";
 import { useTheme } from "@/components/providers/ThemeProvider";
@@ -22,27 +23,46 @@ export default function ContactPage() {
   const { theme } = useTheme();
   const isBlack = theme === "black-dragon";
   const glassBg = isBlack ? "rgba(14,14,14,0.78)" : "rgba(248,243,233,0.82)";
+  const router = useRouter();
 
   const [form, setForm] = useState<FormState>({
     name: "", phone: "", city: "", model: "black-dragon", message: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
-  function buildWhatsAppLink() {
-    const modelName = form.model === "black-dragon" ? "Black Dragon" : "White Dragon";
-    const text = [
-      `🗡️ *Order — Nakama Store Morocco*`,
-      ``,
-      `*Model:* ${modelName}`,
-      `*Name:* ${form.name}`,
-      `*Phone:* ${form.phone}`,
-      `*City:* ${form.city}`,
-      form.message ? `*Message:* ${form.message}` : null,
-    ].filter(Boolean).join("\n");
-    return `https://wa.me/${site.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(text)}`;
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!form.name.trim() || !form.phone.trim() || !form.city.trim()) {
+      setError("Please fill in your name, phone, and city.");
+      return;
+    }
+    setError("");
+    setLoading(true);
+    try {
+      await fetch("/api/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: form.name,
+          phone: form.phone,
+          city: form.city,
+          address: form.city,
+          model: form.model,
+          qty: 1,
+          notes: form.message,
+        }),
+      });
+      router.push(`/thank-you?name=${encodeURIComponent(form.name)}&model=${form.model}&qty=1`);
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   const inputStyle: React.CSSProperties = {
@@ -202,7 +222,7 @@ export default function ContactPage() {
             {/* Info note */}
             <div style={{ marginTop: "1.5rem", padding: "1rem", borderRadius: 8, border: "1px solid rgba(185,154,91,0.14)", backgroundColor: isBlack ? "rgba(185,154,91,0.04)" : "rgba(185,154,91,0.06)" }}>
               <p style={{ color: "var(--text-muted)", fontSize: "0.78rem", lineHeight: 1.65 }}>
-                Orders are confirmed by WhatsApp. No online payment — cash on delivery across Morocco.
+                No online payment required — cash on delivery across Morocco.
               </p>
             </div>
           </motion.div>
@@ -218,7 +238,8 @@ export default function ContactPage() {
               ORDER FORM
             </p>
 
-            <div
+            <form
+              onSubmit={handleSubmit}
               style={{
                 background: glassBg,
                 border: "1px solid rgba(185,154,91,0.22)",
@@ -262,29 +283,27 @@ export default function ContactPage() {
                 />
               </div>
 
-              {/* Submit — opens WhatsApp */}
-              <a
-                href={buildWhatsAppLink()}
-                target="_blank"
-                rel="noopener noreferrer"
+              {error && (
+                <p style={{ color: "#ef4444", fontSize: "0.72rem" }}>{error}</p>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
                 className="flex items-center justify-center gap-2 transition-all duration-300"
                 style={{
-                  height: 50, borderRadius: 8,
+                  height: 50, borderRadius: 8, border: "none", cursor: loading ? "default" : "pointer",
                   backgroundColor: "var(--gold)", color: "var(--bg)",
                   fontSize: "0.7rem", letterSpacing: "0.18em", textTransform: "uppercase", fontWeight: 500,
-                  marginTop: "0.25rem",
+                  marginTop: "0.25rem", opacity: loading ? 0.7 : 1,
                 }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.filter = "brightness(1.1)"; }}
+                onMouseEnter={(e) => { if (!loading) (e.currentTarget as HTMLElement).style.filter = "brightness(1.1)"; }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.filter = ""; }}
               >
                 <Send size={13} />
-                SEND ON WHATSAPP
-              </a>
-
-              <p style={{ color: "var(--text-muted)", fontSize: "0.68rem", textAlign: "center", opacity: 0.55 }}>
-                Clicking will open WhatsApp with your order pre-filled.
-              </p>
-            </div>
+                {loading ? "SENDING..." : "PLACE ORDER"}
+              </button>
+            </form>
           </motion.div>
         </div>
       </section>
