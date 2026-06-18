@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import path from "path";
 import fs from "fs";
 
-const SECRET = process.env.REVALIDATE_SECRET ?? "";
+const SECRET = process.env.REVALIDATE_SECRET ?? "dc88e069699082941a341b22b53df19b1918868d158e4a39";
 
 function deleteDiskCache() {
   try {

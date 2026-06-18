@@ -30,7 +30,7 @@ function buildEmailHtml(d: OrderNotificationData): string {
 <head><meta charset="utf-8" /></head>
 <body style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;color:#222">
   <h2 style="color:#b99a5b;border-bottom:2px solid #b99a5b;padding-bottom:8px">
-    🗡️ New Order — Nakama Store Morocco
+    New Order — Nakama Store Morocco
   </h2>
   <p><strong>Order ID:</strong> ${d.orderId}</p>
   <h3 style="margin-top:20px">Customer</h3>
@@ -73,7 +73,7 @@ export async function sendOrderEmail(data: OrderNotificationData): Promise<void>
     auth: { user, pass: password },
   });
 
-  const subject = `🗡️ New Order #${data.orderId} — ${data.fullName} (${data.city})`;
+  const subject = `New Order #${data.orderId} - ${data.fullName} (${data.city})`;
 
   await transporter.sendMail({
     from:    `"Nakama Store" <${user}>`,
