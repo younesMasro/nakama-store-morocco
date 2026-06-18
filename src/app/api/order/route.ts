@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkoutSchema } from "@/lib/validations";
 import { getProductBySlug } from "@/lib/wordpress";
+import { sendOrderEmail, sendWhatsAppNotification } from "@/lib/notifications";
 
 /* ── WooCommerce REST helpers ────────────────────────────── */
 
@@ -112,15 +113,34 @@ export async function POST(req: NextRequest) {
     const orderNote =
       `Website order. Call customer to confirm.\nDelivery: 24H – 48H. Free delivery. Cash on delivery.${bundleNote}`;
 
-    let orderId: number | null = null;
+    let orderId: number | string = `NK-${Date.now()}`;
     if (lineItems.length) {
       const wcOrder = await createWooOrder({ lineItems, fullName, phone, city, address, orderNote });
-      orderId = wcOrder?.id ?? null;
+      if (wcOrder?.id) orderId = wcOrder.id;
     }
+
+    const notifData = {
+      orderId,
+      fullName,
+      phone,
+      city,
+      address,
+      blackQty,
+      whiteQty,
+      hasBundle,
+      accessories: accessories
+        .filter((a) => a.quantity > 0)
+        .map((a) => ({ name: a.slug.replace(/-/g, " "), quantity: a.quantity })),
+    };
+
+    Promise.all([
+      sendOrderEmail(notifData),
+      sendWhatsAppNotification(notifData),
+    ]).catch((e) => console.error("[Nakama] Notification error:", e));
 
     return NextResponse.json({
       success: true,
-      orderId: orderId ?? `NK-${Date.now()}`,
+      orderId,
       message: "Order received.",
     });
   } catch (err) {

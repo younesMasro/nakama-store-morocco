@@ -32,7 +32,7 @@ const DRAGONS = [
 
 /* ── HomeCard — mirrors DragonCard from catalogue ───────── */
 
-function HomeCard({ dragon, imageUrl }: { dragon: typeof DRAGONS[number]; imageUrl: string | null }) {
+function HomeCard({ dragon, imageUrl, price }: { dragon: typeof DRAGONS[number]; imageUrl: string | null; price: string }) {
   const ref    = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const { accent } = dragon;
@@ -135,7 +135,7 @@ function HomeCard({ dragon, imageUrl }: { dragon: typeof DRAGONS[number]; imageU
 
         <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: "1.25rem" }}>
           <span className="font-heading" style={{ fontSize: "2rem", color: "#ffffff", letterSpacing: "0.02em" }}>
-            1,399
+            {price}
           </span>
           <span style={{ color: accent, fontSize: "0.58rem", letterSpacing: "0.22em" }}>DH</span>
         </div>
@@ -182,10 +182,11 @@ function HomeCard({ dragon, imageUrl }: { dragon: typeof DRAGONS[number]; imageU
 
 interface Props {
   images?:   { "black-dragon"?: string | null; "white-dragon"?: string | null };
+  prices?:   { "black-dragon"?: string | null; "white-dragon"?: string | null };
   showHero?: boolean;
 }
 
-export default function HomeCollection({ images = {}, showHero = false }: Props) {
+export default function HomeCollection({ images = {}, prices = {}, showHero = false }: Props) {
   const { theme } = useTheme();
   const isBlack = theme === "black-dragon";
 
@@ -315,6 +316,7 @@ export default function HomeCollection({ images = {}, showHero = false }: Props)
         }}>
           {DRAGONS.map((dragon, i) => {
             const imageUrl = images[dragon.slug] ?? clientImages[dragon.slug] ?? null;
+            const price = prices[dragon.slug] ?? "1,399";
             return (
               <motion.div
                 key={dragon.slug}
@@ -323,7 +325,7 @@ export default function HomeCollection({ images = {}, showHero = false }: Props)
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.75, ease: "easeOut", delay: i * 0.14 }}
               >
-                <HomeCard dragon={dragon} imageUrl={imageUrl} />
+                <HomeCard dragon={dragon} imageUrl={imageUrl} price={price} />
               </motion.div>
             );
           })}

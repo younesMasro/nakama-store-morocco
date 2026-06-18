@@ -1,6 +1,6 @@
 import HomeCollection from "@/components/sections/HomeCollection";
 import HomeCraft from "@/components/sections/HomeCraft";
-import { getProductBySlug } from "@/lib/wordpress";
+import { getProductBySlug, formatPrice } from "@/lib/wordpress";
 
 export default async function Home() {
   const [black, white] = await Promise.all([
@@ -13,9 +13,14 @@ export default async function Home() {
     "white-dragon": white?.image?.sourceUrl ?? null,
   };
 
+  const collectionPrices = {
+    "black-dragon": formatPrice(black?.price) ?? null,
+    "white-dragon": formatPrice(white?.price) ?? null,
+  };
+
   return (
     <>
-      <HomeCollection images={collectionImages} showHero />
+      <HomeCollection images={collectionImages} prices={collectionPrices} showHero />
       <HomeCraft />
     </>
   );
