@@ -60,7 +60,7 @@ export default function AboutPage() {
           <SectionHeader
             ar="قصة المجموعة"
             ja="物語"
-            en={"A COLLECTION\nMADE FOR DISPLAY"}
+            en={"STORY OF\nDRAGON COLLECTION"}
             sub="Nakama brings Japanese-inspired decorative katanas to collectors, anime lovers, and anyone who wants to elevate their space with a piece of visual art."
             size="lg"
           />
@@ -83,9 +83,10 @@ export default function AboutPage() {
           </div>
 
           {[
-            "The Nakama collection was born from a simple idea: decorative katanas deserve the same care and craftsmanship as any premium collectible. Not replicas. Not toys. Pieces made to be seen, admired, and displayed.",
-            "Each katana is crafted from decorative wood and shaped to carry the elegance of Japanese design. The Black Dragon brings power and mystery. The White Dragon brings purity and light. Together they form a collection made for people who appreciate beauty in their space.",
-            "We deliver across Morocco, with no online payment required. Every order is confirmed directly — because we believe a premium product deserves personal service.",
+            "NAKAMA STORE brought these Souls to life. From shadow and light, the Black and White Dragons were born.",
+            "For centuries, in a world ruled by chaos and despair, the Black Dragon awakened. A force born from darkness… feared across every realm. A blade for Dark Souls, shadow warriors, and broken heroes who walk alone through destiny.",
+            "Then, one day… came the light. From the highest realms of purity, the White Dragon was forged. A symbol of honor, clarity, and divine discipline. Chosen by guardians… protectors of balance… warriors of destiny.",
+            "Two Dragons. Two Purposes. One World. This is not just a collection. This is a legacy of warriors.",
           ].map((para, i) => (
             <p key={i} style={{ color: "var(--text-muted)", fontSize: "clamp(0.9rem,1.5vw,1.05rem)", lineHeight: 1.75 }}>
               {para}

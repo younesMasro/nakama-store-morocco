@@ -496,7 +496,7 @@ export default function ProductPageClient({ slug, wcProduct }: Props) {
                   </div>
 
                   <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-                    {["103 cm · Decorative Wood", "Free delivery · All Morocco", "Cash on delivery"].map((s) => (
+                    {["103 cm · Decorative Wood", "Free delivery · All Morocco"].map((s) => (
                       <div key={s} style={{ display: "flex", alignItems: "center", gap: 8 }}>
                         <div style={{ width: 3, height: 3, borderRadius: "50%", backgroundColor: "var(--gold)", opacity: .55, flexShrink: 0 }} />
                         <span style={{ color: "var(--text-muted)", fontSize: "0.7rem", lineHeight: 1.4 }}>{s}</span>

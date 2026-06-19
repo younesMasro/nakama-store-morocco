@@ -7,7 +7,6 @@ import { Truck, Shield, CreditCard, Phone, Info } from "lucide-react";
 const badges = [
   { icon: Truck, label: "Free Delivery", sub: "All cities in Morocco" },
   { icon: Shield, label: "Decorative Wooden Katana", sub: "Premium quality display piece" },
-  { icon: CreditCard, label: "No Online Payment", sub: "Cash on delivery" },
   { icon: Phone, label: "Order by Contact", sub: "WhatsApp or form" },
   { icon: Info, label: "For Decoration Only", sub: "Not a real weapon" },
 ];

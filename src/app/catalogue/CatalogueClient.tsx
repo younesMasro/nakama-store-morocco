@@ -43,7 +43,6 @@ const COMPARE = [
   { label: "Finish",    value: "Lacquered Detail" },
   { label: "Purpose",   value: "Display Only" },
   { label: "Delivery",  value: "Free — All Morocco" },
-  { label: "Payment",   value: "Cash on Delivery" },
 ];
 
 /* ── Merged dragon shape ─────────────────────────────────── */
@@ -279,8 +278,7 @@ export default function CatalogueClient({ wcProducts }: { wcProducts: WCProduct[
           transition={{ duration: 0.6, delay: 0.28 }}
           style={{ color: "var(--text-muted)", fontSize: "clamp(0.82rem,1.5vw,0.95rem)", lineHeight: 1.65, maxWidth: 560, margin: "0 auto" }}
         >
-          A premium decorative wooden katana for collectors, anime lovers, gaming setups,
-          and bold room decoration. Free delivery across Morocco.
+          Decorative wooden katanas that embody the spirit of the Samurai legacy, honor and discipline. Your gate to Japanese tradition, designed for collectors and premium room decoration.
         </motion.p>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginTop: "2rem" }}>
           <div style={{ height: 1, width: 56, backgroundColor: "var(--gold)", opacity: 0.28 }} />
@@ -371,7 +369,7 @@ export default function CatalogueClient({ wcProducts }: { wcProducts: WCProduct[
           transition={{ duration: 0.5, delay: 0.1 }}
           style={{ color: "var(--text-muted)", fontSize: "0.85rem", marginBottom: "1.5rem" }}
         >
-          Free delivery across Morocco · Cash on delivery · No online payment required
+          Your dragon awaits. Add it to your cart and make it yours.
         </motion.p>
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}

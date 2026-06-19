@@ -301,7 +301,7 @@ export default function HomeCollection({ images = {}, prices = {}, showHero = fa
           </div>
           {showHero && (
             <p style={{ color: "var(--text-muted)", fontSize: "clamp(0.8rem,1.4vw,0.92rem)", lineHeight: 1.65, maxWidth: 520, margin: "1.2rem auto 0" }}>
-              Premium decorative wooden katanas. Free delivery across Morocco. Cash on delivery.
+              Decorative wooden katanas that embody the spirit of the Samurai legacy, honor and discipline. Your gate to Japanese tradition, designed for collectors and premium room decoration.
             </p>
           )}
         </motion.div>

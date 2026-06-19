@@ -147,9 +147,6 @@ function ThankYouContent() {
               <p style={{ color: "var(--text-muted)", fontSize: "0.7rem", lineHeight: 1.6 }}>
                 🚚 <strong style={{ color: "var(--text)" }}>Livraison gratuite</strong> partout au Maroc · Délai: <strong style={{ color: "var(--text)" }}>24H – 48H</strong>
               </p>
-              <p style={{ color: "var(--text-muted)", fontSize: "0.7rem", lineHeight: 1.6 }}>
-                💳 <strong style={{ color: "var(--text)" }}>Paiement à la livraison</strong> — aucun paiement en ligne requis.
-              </p>
               <p style={{ color: "var(--text-muted)", fontSize: "0.68rem", lineHeight: 1.6, opacity: 0.75, marginTop: 2 }}>
                 Notre équipe va vous appeler dans les <strong style={{ color: "var(--text)" }}>24 heures</strong> pour confirmer votre commande.
               </p>

@@ -240,7 +240,7 @@ function HeroTilt() {
 ════════════════════════════════════════════════════════════════ */
 function HeroStrips() {
   const STRIP_1 = "BLACK DRAGON · NAKAMA STORE · MOROCCO · 1,399 DH · ";
-  const STRIP_2 = "التنين الأسود · FREE DELIVERY · CASH ON DELIVERY · ORDER NOW · ";
+  const STRIP_2 = "التنين الأسود · FREE DELIVERY · ORDER NOW · ";
   const STRIP_3 = "DECORATIVE KATANA · 103 CM · WOODEN BLADE · COLLECTOR EDITION · ";
 
   const strip = (text: string, dir: "left" | "right", speed: number, style?: React.CSSProperties) => (

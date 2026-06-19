@@ -15,11 +15,6 @@ export const faq = [
       "Yes. We offer free delivery to all cities across Morocco.",
   },
   {
-    question: "Is online payment required?",
-    answer:
-      "No online payment is required. You pay on delivery (cash on delivery).",
-  },
-  {
     question: "How long does delivery take?",
     answer:
       "Delivery typically takes 2–5 business days depending on your city.",

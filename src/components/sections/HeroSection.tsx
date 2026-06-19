@@ -601,7 +601,6 @@ export default function HeroSection({
                   {[
                     "103 cm · Decorative Wood",
                     "Free delivery · All Morocco",
-                    "Cash on delivery",
                   ].map((spec) => (
                     <div key={spec} style={{ display: "flex", alignItems: "center", gap: 8 }}>
                       <div style={{ width: 3, height: 3, borderRadius: "50%", backgroundColor: "var(--gold)", opacity: 0.55, flexShrink: 0 }} />

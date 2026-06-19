@@ -117,7 +117,7 @@ export default function ContactPage() {
             ar="اطلب الآن"
             ja="連絡"
             en="ORDER YOUR DRAGON"
-            sub="Orders are confirmed directly. No online payment required. Reach us by WhatsApp, fill the form below, or follow us on Instagram."
+            sub="Orders are confirmed directly. Reach us by WhatsApp, fill the form below, or follow us on Instagram."
             size="lg"
           />
         </div>
@@ -222,7 +222,7 @@ export default function ContactPage() {
             {/* Info note */}
             <div style={{ marginTop: "1.5rem", padding: "1rem", borderRadius: 8, border: "1px solid rgba(185,154,91,0.14)", backgroundColor: isBlack ? "rgba(185,154,91,0.04)" : "rgba(185,154,91,0.06)" }}>
               <p style={{ color: "var(--text-muted)", fontSize: "0.78rem", lineHeight: 1.65 }}>
-                No online payment required — cash on delivery across Morocco.
+                Our NAKAMA STORE team will get back to you as soon as possible.
               </p>
             </div>
           </motion.div>

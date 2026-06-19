@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   User, Phone, MapPin, Building2,
   Minus, Plus, Loader2,
-  ShieldCheck, Truck, CreditCard, Package, Gift,
+  ShieldCheck, Truck, Package, Gift,
 } from "lucide-react";
 import type { WCProduct } from "@/lib/woocommerce";
 import { formatPrice } from "@/lib/woocommerce";
@@ -600,7 +600,6 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
 
   const deliveryItems = [
     { Icon: Truck,       label: "Livraison gratuite partout au Maroc" },
-    { Icon: CreditCard,  label: "Paiement à la livraison — aucun paiement en ligne" },
     { Icon: Package,     label: "Emballage sécurisé et premium" },
     { Icon: Phone,       label: "Notre équipe vous appellera pour confirmer la commande" },
   ];
@@ -788,7 +787,6 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
                   {([
                     [ShieldCheck, "Secure"],
                     [Truck,       "Free delivery"],
-                    [CreditCard,  "Cash on delivery"],
                     [Package,     "Packaged safely"],
                   ] as [React.ElementType, string][]).map(([Icon, label]) => (
                     <div key={label} style={{ display: "flex", alignItems: "center", gap: 5 }}>
@@ -855,7 +853,6 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
 
                   <SummaryRow label="Delivery"      value="FREE"         valueStyle={{ color: "var(--gold)", fontWeight: 600 }} />
                   <SummaryRow label="Delivery time" value="24H – 48H"    valueStyle={{ color: "var(--text-muted)", opacity: 0.7 }} />
-                  <SummaryRow label="Payment"       value="Cash on delivery" valueStyle={{ color: "var(--text-muted)", opacity: 0.7 }} />
                 </div>
 
                 <div style={{ height: 1, backgroundColor: divider, marginBottom: "0.85rem" }} />

@@ -180,9 +180,6 @@ export default function OrderForm({ defaultModel }: { defaultModel?: "black-drag
         </a>
       </div>
 
-      <p className="text-white/15 text-xs text-center">
-        No online payment required. Cash on delivery across Morocco.
-      </p>
     </form>
   );
 }
