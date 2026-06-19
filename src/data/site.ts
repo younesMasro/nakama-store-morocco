@@ -4,7 +4,7 @@ export const site = {
   tagline: "Decorative wooden katanas inspired by Japanese legends.",
   description:
     "Made for collectors, anime lovers, gaming setups, and premium room decoration. Free delivery across Morocco. For decoration only.",
-  whatsapp: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "212XXXXXXXXX",
+  whatsapp: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "212776964715",
   instagram: "https://www.instagram.com/nakama_store_morocco",
   trustBadges: [
     { icon: "truck", label: "Free delivery across Morocco" },

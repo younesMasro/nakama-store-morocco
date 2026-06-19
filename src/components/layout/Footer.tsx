@@ -44,7 +44,7 @@ export default function Footer() {
             />
           </Link>
           <p style={{ color: "var(--text-muted)", fontSize: "0.82rem", lineHeight: 1.65, maxWidth: "240px" }}>
-            Decorative wooden katanas inspired by Japanese legends. For collectors, anime lovers, and premium room decoration.
+            Decorative wooden katanas that embody the spirit of the Samurai legacy, honor and discipline. Your gate to Japanese tradition, designed for collectors and premium room decoration.
           </p>
           <p style={{ color: "var(--text-muted)", fontSize: "0.68rem", opacity: 0.5, marginTop: "0.75rem" }}>
             For decoration only. Not a real weapon.
@@ -127,14 +127,14 @@ export default function Footer() {
               @nakama_store_morocco
             </a>
             <a
-              href="mailto:contact@nakamastore.ma"
+              href="mailto:nakama.store.morocco@gmail.com"
               className="flex items-center gap-2"
               style={{ color: "var(--text-muted)", fontSize: "0.82rem", opacity: 0.75, transition: "opacity 0.2s" }}
               onMouseEnter={(e) => { const el = e.currentTarget as HTMLElement; el.style.opacity = "1"; el.style.color = "var(--gold)"; }}
               onMouseLeave={(e) => { const el = e.currentTarget as HTMLElement; el.style.opacity = "0.75"; el.style.color = "var(--text-muted)"; }}
             >
               <Mail size={13} />
-              contact@nakamastore.ma
+              nakama.store.morocco@gmail.com
             </a>
           </div>
         </div>
