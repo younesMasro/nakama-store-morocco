@@ -1,0 +1,18 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/about/page": "app/about/page.js",
+  "/api/order/route": "app/api/order/route.js",
+  "/api/revalidate/route": "app/api/revalidate/route.js",
+  "/cart/page": "app/cart/page.js",
+  "/catalogue/page": "app/catalogue/page.js",
+  "/checkout/page": "app/checkout/page.js",
+  "/contact/page": "app/contact/page.js",
+  "/hero/page": "app/hero/page.js",
+  "/icon.png/route": "app/icon.png/route.js",
+  "/page": "app/page.js",
+  "/privacy/page": "app/privacy/page.js",
+  "/product/[slug]/page": "app/product/[slug]/page.js",
+  "/quality/page": "app/quality/page.js",
+  "/thank-you/page": "app/thank-you/page.js"
+}

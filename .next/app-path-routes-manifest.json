@@ -1,0 +1,18 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/about/page": "/about",
+  "/api/order/route": "/api/order",
+  "/api/revalidate/route": "/api/revalidate",
+  "/cart/page": "/cart",
+  "/catalogue/page": "/catalogue",
+  "/checkout/page": "/checkout",
+  "/contact/page": "/contact",
+  "/hero/page": "/hero",
+  "/icon.png/route": "/icon.png",
+  "/page": "/",
+  "/privacy/page": "/privacy",
+  "/product/[slug]/page": "/product/[slug]",
+  "/quality/page": "/quality",
+  "/thank-you/page": "/thank-you"
+}

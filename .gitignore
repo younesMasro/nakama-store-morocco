@@ -13,8 +13,13 @@
 # testing
 /coverage
 
-# next.js
-/.next/
+# next.js — keep production build for Hostinger deployment, ignore only dev/cache artifacts
+/.next/dev/
+/.next/cache/
+/.next/trace/
+/.next/trace-build/
+/.next/diagnostics/
+/.next/types/
 /out/
 
 # production
