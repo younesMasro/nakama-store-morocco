@@ -83,7 +83,6 @@ export default function AboutPage() {
           </div>
 
           {[
-            "NAKAMA STORE brought these Souls to life. From shadow and light, the Black and White Dragons were born.",
             "For centuries, in a world ruled by chaos and despair, the Black Dragon awakened. A force born from darkness… feared across every realm. A blade for Dark Souls, shadow warriors, and broken heroes who walk alone through destiny.",
             "Then, one day… came the light. From the highest realms of purity, the White Dragon was forged. A symbol of honor, clarity, and divine discipline. Chosen by guardians… protectors of balance… warriors of destiny.",
             "Two Dragons. Two Purposes. One World. This is not just a collection. This is a legacy of warriors.",
