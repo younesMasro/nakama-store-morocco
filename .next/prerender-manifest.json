@@ -13,7 +13,7 @@
           "value": "multipart/form-data;.*"
         }
       ],
-      "initialRevalidateSeconds": 3600,
+      "initialRevalidateSeconds": 1800,
       "initialExpireSeconds": 31536000,
       "srcRoute": "/",
       "dataRoute": "/index.rsc",
@@ -135,7 +135,7 @@
           "value": "multipart/form-data;.*"
         }
       ],
-      "initialRevalidateSeconds": 3600,
+      "initialRevalidateSeconds": 1800,
       "initialExpireSeconds": 31536000,
       "srcRoute": "/catalogue",
       "dataRoute": "/catalogue.rsc",
@@ -301,8 +301,8 @@
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "ad2fd6763bc9d0e851c954d15a5bbeec",
-    "previewModeSigningKey": "ad609439e6eed917e168bf5bc7301ba4488e8e6c0a92a32efd4694d2c12cb31d",
-    "previewModeEncryptionKey": "06667b797aa9f1d0184602e8fa24ffc9cd3c32d0dccaf8ca071529f134413548"
+    "previewModeId": "c8a43bc4624f2f47edc0cad88f93c72d",
+    "previewModeSigningKey": "5b9fb7e75d4d757efb42853d723ddf48cb0dd4c258ad03765db792492d21a4d1",
+    "previewModeEncryptionKey": "68112aa99e4404dfbd1ac8823fbbd51c5abdf96451434ba08bccb46ffbe601f8"
   }
 }
