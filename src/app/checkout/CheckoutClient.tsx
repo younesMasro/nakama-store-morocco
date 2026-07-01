@@ -464,11 +464,11 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
       signal:  controller.signal,
       body: JSON.stringify({
         query: `{
-          ds:   product(id:"display-stand",        idType:SLUG){ databaseId name image{sourceUrl} ...on SimpleProduct{price} }
-          dds:  product(id:"double-display-stand",  idType:SLUG){ databaseId name image{sourceUrl} ...on SimpleProduct{price} }
-          wm:   product(id:"wall-mount",            idType:SLUG){ databaseId name image{sourceUrl} ...on SimpleProduct{price} }
+          ds:   product(id:"display-stand",        idType:SLUG){ databaseId name image{sourceUrl} ...on SimpleProduct{price} ...on VariableProduct{price} }
+          dds:  product(id:"double-display-stand",  idType:SLUG){ databaseId name image{sourceUrl} ...on SimpleProduct{price} ...on VariableProduct{price} }
+          wm:   product(id:"wall-mount",            idType:SLUG){ databaseId name image{sourceUrl} ...on SimpleProduct{price} ...on VariableProduct{price} }
           cat:  products(first:30, where:{category:"accessories"}) {
-            nodes { databaseId slug name image{sourceUrl} ...on SimpleProduct{price} }
+            nodes { databaseId slug name image{sourceUrl} ...on SimpleProduct{price} ...on VariableProduct{price} }
           }
           bd:   product(id:"black-dragon",  idType:SLUG){ image{sourceUrl} }
           wd:   product(id:"white-dragon",  idType:SLUG){ image{sourceUrl} }
@@ -491,7 +491,7 @@ export default function CheckoutClient({ initialSlug, initialQty, wcBlack, wcWhi
             databaseId: match.databaseId || fallback.databaseId,
             slug:       fallback.slug,
             name:       fallback.name,
-            price:      Math.round(parseFloat((match.price ?? "99").replace(/[^\d.]/g, "")) || 99),
+            price:      Math.round(parseFloat((match.price ?? "0").replace(/[^\d.]/g, "")) || 0),
             image:      match.image?.sourceUrl ?? fallback.image,
           };
         }
